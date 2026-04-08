@@ -131,24 +131,24 @@
 
     <section class="chart-row">
         <div class="chart-container">
-            <h3>Weekly Streaming Trend — South Korea</h3>
-            <div class="chart-subtitle">Streams per week by artist</div>
+            <h3 id="trend-kr-title">Weekly Streaming Trend — South Korea</h3>
+            <div class="chart-subtitle" id="trend-kr-sub">Streams per week by artist</div>
             <canvas id="chart-kr"></canvas>
         </div>
         <div class="chart-container">
-            <h3>Weekly Streaming Trend — Japan</h3>
-            <div class="chart-subtitle">Streams per week by artist</div>
+            <h3 id="trend-jp-title">Weekly Streaming Trend — Japan</h3>
+            <div class="chart-subtitle" id="trend-jp-sub">Streams per week by artist</div>
             <canvas id="chart-jp"></canvas>
         </div>
     </section>
 
-    <section class="chart-row">
+    <section class="chart-row" id="cumul-ratio-section">
         <div class="chart-container">
-            <h3>Cumulative Streams — 2026 YTD</h3>
-            <div class="chart-subtitle">Total accumulated streams by artist and market</div>
+            <h3 id="cumul-title">Cumulative Streams — 2026 YTD</h3>
+            <div class="chart-subtitle" id="cumul-sub">Total accumulated streams by artist and market</div>
             <canvas id="chart-cumulative"></canvas>
         </div>
-        <div class="chart-container">
+        <div class="chart-container" id="ratio-container">
             <h3>Japan / Korea Streaming Ratio</h3>
             <div class="chart-subtitle">JP streams as % of total (KR+JP). Higher = stronger Japan presence</div>
             <canvas id="chart-ratio"></canvas>
@@ -157,8 +157,8 @@
 
     <section class="chart-row full">
         <div class="chart-container">
-            <h3>Week-over-Week Growth Rate</h3>
-            <div class="chart-subtitle">% change in total streams (KR+JP combined) vs previous week</div>
+            <h3 id="growth-title">Week-over-Week Growth Rate</h3>
+            <div class="chart-subtitle" id="growth-sub">% change in streams vs previous week</div>
             <canvas id="chart-growth"></canvas>
         </div>
     </section>
@@ -168,6 +168,27 @@
             <h3>Instagram Followers — Cumulative</h3>
             <div class="chart-subtitle">Total follower count per week (USPEER excluded — no IG data)</div>
             <canvas id="chart-ig"></canvas>
+        </div>
+    </section>
+
+    <section class="chart-row" id="composite-section">
+        <div class="chart-container">
+            <h3 id="stream-yt-title">Streams per YouTube Subscriber</h3>
+            <div class="chart-subtitle" id="stream-yt-sub">Weekly streams ÷ YT channel subscribers — higher = stronger fan mobilization</div>
+            <canvas id="chart-stream-yt"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3 id="stream-ig-title">Streams per Instagram Follower</h3>
+            <div class="chart-subtitle" id="stream-ig-sub">Weekly streams ÷ IG followers — higher = stronger organic conversion</div>
+            <canvas id="chart-stream-ig"></canvas>
+        </div>
+    </section>
+
+    <section class="chart-row full">
+        <div class="chart-container">
+            <h3 id="mobil-title">Fan Mobilization Snapshot — Latest Week</h3>
+            <div class="chart-subtitle" id="mobil-sub">Streams per YT Subscriber vs Streams per IG Follower (bubble size = total streams)</div>
+            <canvas id="chart-mobilization"></canvas>
         </div>
     </section>
 
@@ -556,6 +577,31 @@ const IG_DATA = IG_RAW.map(r=>({week:r[0],artist:r[1],followers:+r[2]}));
 const IG_WEEKS = [...new Set(IG_DATA.map(d=>d.week))].sort();
 const IG_ARTISTS = [...new Set(IG_DATA.map(d=>d.artist))].sort();
 
+// ============================================================
+// SOCIAL DATA — [week, artist, yt_subs, ig_followers]
+// For composite ratio metrics: Streams / YT Subs, Streams / IG Followers
+// USPEER excluded (no social data)
+// ============================================================
+const SOCIAL_RAW = [
+["2025-12-29","AtHeart",1310000,132130],["2025-12-29","Baby DONT Cry",153375,286015],["2025-12-29","HITGS",62000,131201],["2025-12-29","Hearts2Hearts",1410000,3109837],["2025-12-29","ILLIT",3385000,5665677],["2025-12-29","KiiiKiii",206000,737024],["2025-12-29","MEOVV",1101000,2534275],["2025-12-29","RESCENE",291750,240075],["2025-12-29","Say My Name",466750,399054],["2025-12-29","UNIS",816750,2110567],["2025-12-29","ifeye",272889,252980],
+["2026-01-05","AtHeart",1310000,133344],["2026-01-05","Baby DONT Cry",154500,286856],["2026-01-05","HITGS",62400,129001],["2026-01-05","Hearts2Hearts",1427500,3148372],["2026-01-05","ILLIT",3426667,5736365],["2026-01-05","KiiiKiii",264989,750888],["2026-01-05","MEOVV",1108000,2548339],["2026-01-05","RESCENE",293400,241352],["2026-01-05","Say My Name",468333,399534],["2026-01-05","UNIS",818167,2107792],["2026-01-05","ifeye",273462,254354],
+["2026-01-12","AtHeart",1310000,134815],["2026-01-12","Baby DONT Cry",155714,288738],["2026-01-12","HITGS",62700,128075],["2026-01-12","Hearts2Hearts",1447500,3182686],["2026-01-12","ILLIT",3480000,5808032],["2026-01-12","KiiiKiii",271758,773934],["2026-01-12","MEOVV",1114167,2561331],["2026-01-12","RESCENE",296000,242705],["2026-01-12","Say My Name",470333,399287],["2026-01-12","UNIS",819400,2094526],["2026-01-12","ifeye",274000,255254],
+["2026-01-19","AtHeart",1310000,138986],["2026-01-19","Baby DONT Cry",156625,298427],["2026-01-19","HITGS",62920,126761],["2026-01-19","Hearts2Hearts",1460000,3213389],["2026-01-19","ILLIT",3525000,5860578],["2026-01-19","KiiiKiii",278527,798485],["2026-01-19","MEOVV",1120000,2576990],["2026-01-19","RESCENE",299000,245412],["2026-01-19","Say My Name",472000,400739],["2026-01-19","UNIS",821000,2091556],["2026-01-19","ifeye",274500,255659],
+["2026-01-26","AtHeart",1310000,143436],["2026-01-26","Baby DONT Cry",157500,306515],["2026-01-26","HITGS",63333,123739],["2026-01-26","Hearts2Hearts",1468750,3242663],["2026-01-26","ILLIT",3555000,5910009],["2026-01-26","KiiiKiii",285297,840048],["2026-01-26","MEOVV",1123889,2585818],["2026-01-26","RESCENE",301500,246727],["2026-01-26","Say My Name",472875,402427],["2026-01-26","UNIS",822000,2088041],["2026-01-26","ifeye",275000,256057],
+["2026-02-02","AtHeart",1310000,146552],["2026-02-02","Baby DONT Cry",158300,308456],["2026-02-02","HITGS",63500,122077],["2026-02-02","Hearts2Hearts",1487500,3274378],["2026-02-02","ILLIT",3603333,5963252],["2026-02-02","KiiiKiii",292066,892204],["2026-02-02","MEOVV",1127778,2591847],["2026-02-02","RESCENE",303500,248200],["2026-02-02","Say My Name",474000,404429],["2026-02-02","UNIS",823125,2085785],["2026-02-02","ifeye",275636,256561],
+["2026-02-09","AtHeart",1310000,148715],["2026-02-09","Baby DONT Cry",159000,310317],["2026-02-09","HITGS",63700,120617],["2026-02-09","Hearts2Hearts",1510000,3308329],["2026-02-09","ILLIT",3635000,6005004],["2026-02-09","KiiiKiii",297000,948649],["2026-02-09","MEOVV",1131765,2597028],["2026-02-09","RESCENE",304833,249985],["2026-02-09","Say My Name",474467,405799],["2026-02-09","UNIS",824000,2083009],["2026-02-09","ifeye",276136,258178],
+["2026-02-16","AtHeart",1310000,150689],["2026-02-16","Baby DONT Cry",159545,313042],["2026-02-16","HITGS",63967,119818],["2026-02-16","Hearts2Hearts",1560000,3385559],["2026-02-16","ILLIT",3660000,6048058],["2026-02-16","KiiiKiii",297000,997015],["2026-02-16","MEOVV",1135882,2614558],["2026-02-16","RESCENE",306222,251344],["2026-02-16","UNIS",825000,2079866],["2026-02-16","ifeye",276364,258569],
+["2026-02-23","AtHeart",1316000,155773],["2026-02-23","Baby DONT Cry",160500,314605],["2026-02-23","HITGS",64200,119242],["2026-02-23","Hearts2Hearts",1620000,3498649],["2026-02-23","ILLIT",3690000,6084289],["2026-02-23","KiiiKiii",297000,1034835],["2026-02-23","MEOVV",1140000,2626004],["2026-02-23","RESCENE",307500,253190],["2026-02-23","Say My Name",475429,408180],["2026-02-23","UNIS",826000,2076828],["2026-02-23","ifeye",276773,258814],
+["2026-03-02","AtHeart",1340000,157078],["2026-03-02","Baby DONT Cry",162250,317684],["2026-03-02","HITGS",64450,118663],["2026-03-02","Hearts2Hearts",1730000,3638270],["2026-03-02","ILLIT",3715000,6113742],["2026-03-02","KiiiKiii",297000,1077313],["2026-03-02","MEOVV",1144667,2638185],["2026-03-02","RESCENE",308833,255006],["2026-03-02","Say My Name",475929,409026],["2026-03-02","UNIS",827250,2077745],["2026-03-02","ifeye",277105,258805],
+["2026-03-09","AtHeart",1370000,161774],["2026-03-09","Baby DONT Cry",166000,323775],["2026-03-09","HITGS",64700,118123],["2026-03-09","Hearts2Hearts",1820000,3777803],["2026-03-09","ILLIT",3740000,6160304],["2026-03-09","KiiiKiii",297000,1112683],["2026-03-09","MEOVV",1149333,2656370],["2026-03-09","RESCENE",309750,256756],["2026-03-09","Say My Name",476462,410198],["2026-03-09","UNIS",828143,2073236],["2026-03-09","ifeye",277474,258713],
+["2026-03-16","AtHeart",1420000,168801],["2026-03-16","Baby DONT Cry",169000,329382],["2026-03-16","HITGS",65100,117682],["2026-03-16","Hearts2Hearts",1920000,3911403],["2026-03-16","ILLIT",3780000,6200032],["2026-03-16","KiiiKiii",297000,1146073],["2026-03-16","MEOVV",1154000,2670441],["2026-03-16","RESCENE",310556,257901],["2026-03-16","Say My Name",477000,411210],["2026-03-16","UNIS",829143,2069870],["2026-03-16","ifeye",277842,258349],
+["2026-03-23","AtHeart",1480000,172397],["2026-03-23","Baby DONT Cry",336000,397054],["2026-03-23","HITGS",65267,117175],["2026-03-23","Hearts2Hearts",1980000,4063729],["2026-03-23","ILLIT",3805000,6235859],["2026-03-23","KiiiKiii",297000,1174010],["2026-03-23","MEOVV",1158667,2678943],["2026-03-23","RESCENE",312000,260220],["2026-03-23","Say My Name",477700,411879],["2026-03-23","UNIS",830500,2067563],["2026-03-23","ifeye",278364,258537],
+["2026-03-30","AtHeart",1500000,181672],["2026-03-30","Baby DONT Cry",549000,485963],["2026-03-30","HITGS",65400,116578],["2026-03-30","Hearts2Hearts",2120000,4276598],["2026-03-30","ILLIT",3840000,6267843],["2026-03-30","KiiiKiii",297000,1205688],["2026-03-30","MEOVV",1160000,2687440],["2026-03-30","RESCENE",314000,263401],["2026-03-30","Say My Name",478000,412448],["2026-03-30","UNIS",832000,2065513],["2026-03-30","ifeye",279000,258488]
+];
+const SOCIAL_DATA = SOCIAL_RAW.map(r=>({week:r[0],artist:r[1],yt:+r[2],ig:+r[3]}));
+const SOCIAL_WEEKS = [...new Set(SOCIAL_DATA.map(d=>d.week))].sort();
+const SOCIAL_ARTISTS = [...new Set(SOCIAL_DATA.map(d=>d.artist))].sort();
+
 // Tableau 10 palette
 const COLORS = {
     'AtHeart':'#e15759','Hearts2Hearts':'#4e79a7','KiiiKiii':'#f28e2b',
@@ -624,7 +670,7 @@ class Dashboard {
 
     validWeeks() { return WEEKS.filter(w => DATA.some(d => d.week===w && d.total>0)); }
 
-    init() { this.renderKPIs(); this.renderTrends(); this.renderCumulative(); this.renderRatio(); this.renderGrowth(); this.renderIG(); this.renderTable(); }
+    init() { this.renderKPIs(); this.renderTrends(); this.renderCumulative(); this.renderRatio(); this.renderGrowth(); this.renderIG(); this.renderStreamYT(); this.renderStreamIG(); this.renderMobilization(); this.renderTable(); }
 
     applyFilters() {
         Object.values(this.charts).forEach(c=>c.destroy());
@@ -677,30 +723,77 @@ class Dashboard {
     }
 
     renderTrends() {
-        const m=this.mk(), vis=this.vis(), vw=this.validWeeks();
+        const m=this.mk(), mkt=this.mf(), vis=this.vis(), vw=this.validWeeks();
+        const mLabel = this.metricLabel();
+        const krEl = document.getElementById('chart-kr');
+        const jpEl = document.getElementById('chart-jp');
+        const krWrap = krEl.parentElement;
+        const jpWrap = jpEl.parentElement;
+        const trendRow = krWrap.parentElement;
+        if (mkt === 'all') {
+            krWrap.style.display = ''; jpWrap.style.display = '';
+            trendRow.style.gridTemplateColumns = '1fr 1fr';
+            document.getElementById('trend-kr-title').textContent = `Weekly ${mLabel} Streaming — South Korea`;
+            document.getElementById('trend-jp-title').textContent = `Weekly ${mLabel} Streaming — Japan`;
+        } else if (mkt === 'KR') {
+            krWrap.style.display = ''; jpWrap.style.display = 'none';
+            trendRow.style.gridTemplateColumns = '1fr';
+            document.getElementById('trend-kr-title').textContent = `Weekly ${mLabel} Streaming — South Korea`;
+        } else {
+            krWrap.style.display = 'none'; jpWrap.style.display = '';
+            trendRow.style.gridTemplateColumns = '1fr';
+            document.getElementById('trend-jp-title').textContent = `Weekly ${mLabel} Streaming — Japan`;
+        }
         ['KR','JP'].forEach(loc => {
-            const id='chart-'+loc.toLowerCase(), a=this.agg(loc,m);
+            const id='chart-'+loc.toLowerCase();
+            const wrap = document.getElementById(id).parentElement;
+            if (wrap.style.display === 'none') return;
+            const a=this.agg(loc,m);
             const datasets = vis.map(art => this.ds(art, vw.map(w=>a[w+'|'+art]||0)));
             this.charts[id] = new Chart(document.getElementById(id),{type:'line',data:{labels:vw.map(w=>w.substring(5)),datasets},options:this.lineOpts()});
         });
     }
 
     renderCumulative() {
-        const m=this.mk(), vis=this.vis();
-        const labels=[], krT=[], jpT=[];
-        vis.forEach(art => {
-            let kr=0,jp=0;
-            DATA.forEach(d=>{if(d.artist!==art||d.total===0)return;if(d.location==='KR')kr+=d[m];if(d.location==='JP')jp+=d[m];});
-            labels.push(art); krT.push(kr); jpT.push(jp);
-        });
-        const idx=labels.map((_,i)=>i).sort((a,b)=>(krT[b]+jpT[b])-(krT[a]+jpT[a]));
-        const sL=idx.map(i=>labels[i]),sK=idx.map(i=>krT[i]),sJ=idx.map(i=>jpT[i]);
-        const bgK=sL.map(l=>l==='AtHeart'?'#e15759':'#4e79a7'), bgJ=sL.map(l=>l==='AtHeart'?'rgba(225,87,89,0.5)':'rgba(78,121,167,0.5)');
-        this.charts['chart-cumulative']=new Chart(document.getElementById('chart-cumulative'),{type:'bar',data:{labels:sL,datasets:[{label:'South Korea',data:sK,backgroundColor:bgK,borderRadius:3},{label:'Japan',data:sJ,backgroundColor:bgJ,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{color:'#555',font:{size:11}}},tooltip:{backgroundColor:'#fff',titleColor:'#333',bodyColor:'#555',borderColor:'#d4d4d4',borderWidth:1,cornerRadius:3,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.parsed.x)}`}}},scales:{x:{stacked:true,grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10},callback:v=>fmt(v)},border:{color:'#d4d4d4'}},y:{stacked:true,grid:{display:false},ticks:{color:'#333',font:{size:11}},border:{color:'#d4d4d4'}}}}});
+        const m=this.mk(), mkt=this.mf(), vis=this.vis();
+        const mLabel = this.metricLabel(), mkLabel = this.mktLabel();
+        document.getElementById('cumul-title').textContent = `Cumulative ${mLabel} Streams — ${mkLabel} — 2026 YTD`;
+
+        if (mkt === 'all') {
+            // Stacked KR + JP
+            const labels=[], krT=[], jpT=[];
+            vis.forEach(art => {
+                let kr=0,jp=0;
+                DATA.forEach(d=>{if(d.artist!==art||d.total===0)return;if(d.location==='KR')kr+=d[m];if(d.location==='JP')jp+=d[m];});
+                labels.push(art); krT.push(kr); jpT.push(jp);
+            });
+            const idx=labels.map((_,i)=>i).sort((a,b)=>(krT[b]+jpT[b])-(krT[a]+jpT[a]));
+            const sL=idx.map(i=>labels[i]),sK=idx.map(i=>krT[i]),sJ=idx.map(i=>jpT[i]);
+            const bgK=sL.map(l=>l==='AtHeart'?'#e15759':'#4e79a7'), bgJ=sL.map(l=>l==='AtHeart'?'rgba(225,87,89,0.5)':'rgba(78,121,167,0.5)');
+            document.getElementById('cumul-sub').textContent = 'Total accumulated streams by artist — stacked by market';
+            this.charts['chart-cumulative']=new Chart(document.getElementById('chart-cumulative'),{type:'bar',data:{labels:sL,datasets:[{label:'South Korea',data:sK,backgroundColor:bgK,borderRadius:3},{label:'Japan',data:sJ,backgroundColor:bgJ,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{color:'#555',font:{size:11}}},tooltip:{backgroundColor:'#fff',titleColor:'#333',bodyColor:'#555',borderColor:'#d4d4d4',borderWidth:1,cornerRadius:3,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.parsed.x)}`}}},scales:{x:{stacked:true,grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10},callback:v=>fmt(v)},border:{color:'#d4d4d4'}},y:{stacked:true,grid:{display:false},ticks:{color:'#333',font:{size:11}},border:{color:'#d4d4d4'}}}}});
+        } else {
+            // Single market
+            const labels=[], vals=[];
+            vis.forEach(art => {
+                let t=0;
+                DATA.forEach(d=>{if(d.artist!==art||d.total===0||d.location!==mkt)return;t+=d[m];});
+                labels.push(art); vals.push(t);
+            });
+            const idx=labels.map((_,i)=>i).sort((a,b)=>vals[b]-vals[a]);
+            const sL=idx.map(i=>labels[i]),sV=idx.map(i=>vals[i]);
+            const bg=sL.map(l=>l==='AtHeart'?'#e15759':'#4e79a7');
+            document.getElementById('cumul-sub').textContent = `${mLabel} streams — ${mkLabel} only`;
+            this.charts['chart-cumulative']=new Chart(document.getElementById('chart-cumulative'),{type:'bar',data:{labels:sL,datasets:[{label:mkLabel,data:sV,backgroundColor:bg,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{color:'#555',font:{size:11}}},tooltip:{backgroundColor:'#fff',titleColor:'#333',bodyColor:'#555',borderColor:'#d4d4d4',borderWidth:1,cornerRadius:3,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.parsed.x)}`}}},scales:{x:{grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10},callback:v=>fmt(v)},border:{color:'#d4d4d4'}},y:{grid:{display:false},ticks:{color:'#333',font:{size:11}},border:{color:'#d4d4d4'}}}}});
+        }
     }
 
     renderRatio() {
-        const m=this.mk(), vis=this.vis(), vw=this.validWeeks();
+        const m=this.mk(), mkt=this.mf(), vis=this.vis(), vw=this.validWeeks();
+        const ratioContainer = document.getElementById('ratio-container');
+        // JP/KR ratio only makes sense for 'all' market; hide otherwise
+        if (mkt !== 'all') { ratioContainer.style.display = 'none'; return; }
+        ratioContainer.style.display = '';
         const datasets=vis.map(art=>{
             const ratios=vw.map(w=>{let kr=0,jp=0;DATA.forEach(d=>{if(d.artist!==art||d.week!==w)return;if(d.location==='KR')kr+=d[m];if(d.location==='JP')jp+=d[m];});const t=kr+jp;return t>0?(jp/t*100):0;});
             return this.ds(art,ratios);
@@ -709,7 +802,9 @@ class Dashboard {
     }
 
     renderGrowth() {
-        const m=this.mk(), vis=this.vis(), vw=this.validWeeks(), a=this.agg('all',m), gw=vw.slice(1);
+        const m=this.mk(), mkt=this.mf(), vis=this.vis(), vw=this.validWeeks(), a=this.agg(mkt,m), gw=vw.slice(1);
+        document.getElementById('growth-title').textContent = `Week-over-Week Growth Rate — ${this.mktLabel()}`;
+        document.getElementById('growth-sub').textContent = `% change in ${this.metricLabel()} streams (${this.mktLabel()}) vs previous week`;
         const datasets=vis.map(art=>{
             const g=gw.map((w,i)=>{const p=a[vw[i]+'|'+art]||0,c=a[w+'|'+art]||0;return p>0?((c-p)/p*100):0;});
             return this.ds(art,g);
@@ -756,20 +851,152 @@ class Dashboard {
         });
     }
 
+    mktLabel() { const mkt=this.mf(); return mkt==='all'?'KR+JP':mkt==='KR'?'South Korea':'Japan'; }
+    metricLabel() { const m=this.mk(); return m==='total'?'Total':m==='premium'?'Premium':'Ad-Supported'; }
+
+    renderStreamYT() {
+        const m=this.mk(), mkt=this.mf();
+        const vis = this.vis().filter(a => SOCIAL_ARTISTS.includes(a));
+        const agg = this.agg(mkt, m);
+        const socIdx = {};
+        SOCIAL_DATA.forEach(d => { socIdx[d.week+'|'+d.artist] = d; });
+        const datasets = vis.map(art => {
+            const ratios = SOCIAL_WEEKS.map(w => {
+                const streams = agg[w+'|'+art] || 0;
+                const s = socIdx[w+'|'+art];
+                const yt = s ? s.yt : 0;
+                return yt > 0 ? (streams / yt) : 0;
+            });
+            return this.ds(art, ratios);
+        });
+        const el = document.getElementById('chart-stream-yt').parentElement;
+        el.querySelector('h3').textContent = `Streams per YouTube Subscriber — ${this.mktLabel()}`;
+        el.querySelector('.chart-subtitle').textContent = `Weekly ${this.metricLabel()} streams (${this.mktLabel()}) ÷ YT channel subscribers`;
+        this.charts['chart-stream-yt'] = new Chart(document.getElementById('chart-stream-yt'), {
+            type: 'line',
+            data: { labels: SOCIAL_WEEKS.map(w => w.substring(5)), datasets },
+            options: {
+                ...this.lineOpts(v => v.toFixed(2)),
+                scales: {
+                    x: { grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 } }, border: { color: '#d4d4d4' } },
+                    y: { beginAtZero: true, grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 }, callback: v => v.toFixed(1) }, border: { color: '#d4d4d4' },
+                        title: { display: true, text: 'Streams / YT Sub', color: '#767676', font: { size: 10 } } }
+                }
+            }
+        });
+    }
+
+    renderStreamIG() {
+        const m=this.mk(), mkt=this.mf();
+        const vis = this.vis().filter(a => SOCIAL_ARTISTS.includes(a));
+        const agg = this.agg(mkt, m);
+        const socIdx = {};
+        SOCIAL_DATA.forEach(d => { socIdx[d.week+'|'+d.artist] = d; });
+        const datasets = vis.map(art => {
+            const ratios = SOCIAL_WEEKS.map(w => {
+                const streams = agg[w+'|'+art] || 0;
+                const s = socIdx[w+'|'+art];
+                const ig = s ? s.ig : 0;
+                return ig > 0 ? (streams / ig) : 0;
+            });
+            return this.ds(art, ratios);
+        });
+        const el = document.getElementById('chart-stream-ig').parentElement;
+        el.querySelector('h3').textContent = `Streams per Instagram Follower — ${this.mktLabel()}`;
+        el.querySelector('.chart-subtitle').textContent = `Weekly ${this.metricLabel()} streams (${this.mktLabel()}) ÷ IG followers`;
+        this.charts['chart-stream-ig'] = new Chart(document.getElementById('chart-stream-ig'), {
+            type: 'line',
+            data: { labels: SOCIAL_WEEKS.map(w => w.substring(5)), datasets },
+            options: {
+                ...this.lineOpts(v => v.toFixed(2)),
+                scales: {
+                    x: { grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 } }, border: { color: '#d4d4d4' } },
+                    y: { beginAtZero: true, grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 }, callback: v => v.toFixed(1) }, border: { color: '#d4d4d4' },
+                        title: { display: true, text: 'Streams / IG Follower', color: '#767676', font: { size: 10 } } }
+                }
+            }
+        });
+    }
+
+    renderMobilization() {
+        const m=this.mk(), mkt=this.mf();
+        const vis = this.vis().filter(a => SOCIAL_ARTISTS.includes(a));
+        const agg = this.agg(mkt, m);
+        const socIdx = {};
+        SOCIAL_DATA.forEach(d => { socIdx[d.week+'|'+d.artist] = d; });
+        const lastW = SOCIAL_WEEKS[SOCIAL_WEEKS.length - 1];
+        const points = [];
+        vis.forEach(art => {
+            const streams = agg[lastW+'|'+art] || 0;
+            const s = socIdx[lastW+'|'+art];
+            if (!s || s.yt === 0 || s.ig === 0) return;
+            points.push({ art, x: streams / s.yt, y: streams / s.ig, r: Math.max(5, Math.sqrt(streams / 1000)) });
+        });
+        const datasets = points.map(p => {
+            const isA = p.art === 'AtHeart';
+            return {
+                label: p.art,
+                data: [{ x: p.x, y: p.y, r: Math.min(p.r, 40) }],
+                backgroundColor: COLORS[p.art] + '80',
+                borderColor: COLORS[p.art],
+                borderWidth: isA ? 3 : 1.5,
+                hoverBorderWidth: 3
+            };
+        });
+        const el = document.getElementById('chart-mobilization').parentElement;
+        el.querySelector('h3').textContent = `Fan Mobilization Snapshot — ${this.mktLabel()} / ${this.metricLabel()} (Latest Week)`;
+        el.querySelector('.chart-subtitle').textContent = `${this.metricLabel()} Streams per YT Sub vs per IG Follower (${this.mktLabel()}) — bubble size = stream volume`;
+        this.charts['chart-mobilization'] = new Chart(document.getElementById('chart-mobilization'), {
+            type: 'bubble',
+            data: { datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 12, color: '#555', font: { size: 11 } } },
+                    tooltip: {
+                        backgroundColor: '#fff', titleColor: '#333', bodyColor: '#555', borderColor: '#d4d4d4', borderWidth: 1, cornerRadius: 3, padding: 10,
+                        callbacks: {
+                            label: ctx => {
+                                const d = ctx.raw;
+                                return `${ctx.dataset.label}: YT ${d.x.toFixed(2)}, IG ${d.y.toFixed(2)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: 'Streams / YT Subscriber', color: '#555', font: { size: 11, weight: '600' } }, grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 } }, border: { color: '#d4d4d4' } },
+                    y: { title: { display: true, text: 'Streams / IG Follower', color: '#555', font: { size: 11, weight: '600' } }, grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 } }, border: { color: '#d4d4d4' } }
+                }
+            }
+        });
+    }
+
     renderTable() {
         const m=this.mk(), mkt=this.mf(), vw=this.validWeeks();
         const lastW=vw[vw.length-1], prevW=vw[vw.length-2];
+        const socIdx = {};
+        SOCIAL_DATA.forEach(d => { socIdx[d.week+'|'+d.artist] = d; });
+        const socLastW = SOCIAL_WEEKS[SOCIAL_WEEKS.length - 1];
+        const agg = this.agg(mkt, m);
         const stats={};
-        ALL_ARTISTS.forEach(art=>{let t=0,kr=0,jp=0,lw=0,pw=0;DATA.forEach(d=>{if(d.artist!==art||d.total===0)return;if(mkt!=='all'&&d.location!==mkt)return;t+=d[m];if(d.location==='KR')kr+=d[m];if(d.location==='JP')jp+=d[m];if(d.week===lastW)lw+=d[m];if(d.week===prevW)pw+=d[m];});stats[art]={t,kr,jp,lw,wow:pw>0?((lw-pw)/pw*100):0,jpR:(kr+jp)>0?(jp/(kr+jp)*100):0};});
+        ALL_ARTISTS.forEach(art=>{let t=0,kr=0,jp=0,lw=0,pw=0;DATA.forEach(d=>{if(d.artist!==art||d.total===0)return;if(mkt!=='all'&&d.location!==mkt)return;t+=d[m];if(d.location==='KR')kr+=d[m];if(d.location==='JP')jp+=d[m];if(d.week===lastW)lw+=d[m];if(d.week===prevW)pw+=d[m];});
+            const soc = socIdx[socLastW+'|'+art];
+            const weekStreams = agg[socLastW+'|'+art] || 0;
+            const ytR = soc && soc.yt > 0 ? (weekStreams / soc.yt) : null;
+            const igR = soc && soc.ig > 0 ? (weekStreams / soc.ig) : null;
+            stats[art]={t,kr,jp,lw,wow:pw>0?((lw-pw)/pw*100):0,jpR:(kr+jp)>0?(jp/(kr+jp)*100):0,ytR,igR};
+        });
         const sorted=Object.entries(stats).sort((a,b)=>b[1].t-a[1].t);
-        let h='<table class="data-table"><thead><tr><th>Rank</th><th>Artist</th><th>Total Streams</th><th>KR</th><th>JP</th><th>JP Ratio</th><th>Latest Week</th><th>WoW %</th></tr></thead><tbody>';
+        let h='<table class="data-table"><thead><tr><th>Rank</th><th>Artist</th><th>Total Streams</th><th>KR</th><th>JP</th><th>JP Ratio</th><th>Latest Week</th><th>WoW %</th><th>Str/YT Sub</th><th>Str/IG Fol</th></tr></thead><tbody>';
         sorted.forEach(([art,s],i)=>{
             const isA=art==='AtHeart';
             h+=`<tr${isA?' class="atheart-row"':''}>`;
             h+=`<td><span class="rank-badge${i<3?' top3':''}">${i+1}</span></td>`;
             h+=`<td><span class="artist-badge"><span class="artist-dot" style="background:${COLORS[art]}"></span>${isA?'<strong>'+art+'</strong>':art}</span></td>`;
             h+=`<td>${fmt(s.t)}</td><td>${fmt(s.kr)}</td><td>${fmt(s.jp)}</td><td>${s.jpR.toFixed(1)}%</td><td>${fmt(s.lw)}</td>`;
-            h+=`<td style="color:${s.wow>=0?'var(--positive)':'var(--negative)'}">${s.wow>=0?'+':''}${s.wow.toFixed(1)}%</td></tr>`;
+            h+=`<td style="color:${s.wow>=0?'var(--positive)':'var(--negative)'}">${s.wow>=0?'+':''}${s.wow.toFixed(1)}%</td>`;
+            h+=`<td>${s.ytR !== null ? s.ytR.toFixed(2) : '—'}</td>`;
+            h+=`<td>${s.igR !== null ? s.igR.toFixed(2) : '—'}</td></tr>`;
         });
         h+='</tbody></table>';
         document.getElementById('summary-table').innerHTML=h;
