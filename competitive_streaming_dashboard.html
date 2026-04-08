@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-pop Girl Group Competitive Streaming Analysis — AtHeart Focus</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg-primary: #f3f3f3;
+            --bg-card: #ffffff;
+            --bg-header: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #767676;
+            --text-on-dark: #333333;
+            --accent-atheart: #e15759;
+            --accent-atheart-glow: rgba(225, 87, 89, 0.12);
+            --positive: #59a14f;
+            --negative: #e15759;
+            --tableau-blue: #4e79a7;
+            --gap: 14px;
+            --radius: 4px;
+            --border: 1px solid #e0e0e0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        .dashboard-container { max-width: 1440px; margin: 0 auto; padding: 20px var(--gap); }
+
+        .dashboard-header { background: var(--bg-header); padding: 20px 24px; border-radius: var(--radius); margin-bottom: var(--gap); border: var(--border); box-shadow: var(--shadow); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
+        .header-top h1 { font-size: 20px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.3px; }
+        .header-top h1 span { color: var(--accent-atheart); font-weight: 700; }
+        .header-sub { font-size: 12px; color: var(--text-secondary); margin-bottom: 14px; border-bottom: 3px solid var(--tableau-blue); padding-bottom: 10px; }
+
+        .filters { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
+        .filter-group { display: flex; flex-direction: column; gap: 3px; }
+        .filter-group label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+        .filter-group select { padding: 6px 10px; border: 1px solid #c8c8c8; border-radius: 3px; background: #fff; color: var(--text-primary); font-size: 12px; cursor: pointer; outline: none; }
+        .filter-group select:focus { border-color: var(--tableau-blue); box-shadow: 0 0 0 2px rgba(78,121,167,0.15); }
+        .filter-group select option { background: #fff; color: var(--text-primary); }
+
+        .artist-checkboxes { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .artist-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 3px; font-size: 11px; cursor: pointer; border: 1px solid #d4d4d4; background: #fafafa; color: var(--text-secondary); transition: all 0.15s; user-select: none; font-weight: 500; }
+        .artist-chip.active { background: #fff; color: var(--text-primary); border-color: #999; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+        .artist-chip .chip-dot { width: 10px; height: 10px; border-radius: 2px; }
+        .artist-chip.atheart-chip.active { border-color: var(--accent-atheart); background: rgba(225,87,89,0.06); color: var(--accent-atheart); font-weight: 700; }
+        .chip-controls { display: flex; gap: 4px; margin-right: 10px; }
+        .chip-controls button { padding: 4px 8px; border-radius: 3px; border: 1px solid #c8c8c8; background: #fff; color: var(--text-secondary); font-size: 10px; cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+        .chip-controls button:hover { background: #f0f0f0; color: var(--text-primary); border-color: #999; }
+
+        .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--gap); margin-bottom: var(--gap); }
+        .kpi-card { background: var(--bg-card); border-radius: var(--radius); padding: 18px 20px; border: var(--border); box-shadow: var(--shadow); }
+        .kpi-card.highlight { border-left: 4px solid var(--accent-atheart); }
+        .kpi-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; font-weight: 600; }
+        .kpi-value { font-size: 26px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; letter-spacing: -0.5px; }
+        .kpi-card.highlight .kpi-value { color: var(--accent-atheart); }
+        .kpi-change { font-size: 11px; font-weight: 500; }
+        .kpi-change.positive { color: var(--positive); }
+        .kpi-change.negative { color: var(--negative); }
+
+        .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); margin-bottom: var(--gap); }
+        .chart-row.full { grid-template-columns: 1fr; }
+        .chart-container { background: var(--bg-card); border-radius: var(--radius); padding: 18px 20px; border: var(--border); box-shadow: var(--shadow); }
+        .chart-container h3 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+        .chart-subtitle { font-size: 10px; color: var(--text-secondary); margin-bottom: 14px; }
+        .chart-container canvas { max-height: 340px; }
+
+        .table-section { background: var(--bg-card); border-radius: var(--radius); padding: 18px 20px; border: var(--border); box-shadow: var(--shadow); overflow-x: auto; margin-bottom: var(--gap); }
+        .table-section h3 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 14px; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .data-table thead th { text-align: left; padding: 8px 10px; border-bottom: 2px solid #333; color: var(--text-primary); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; cursor: pointer; user-select: none; }
+        .data-table thead th:hover { background: #f5f5f5; }
+        .data-table tbody td { padding: 8px 10px; border-bottom: 1px solid #ececec; }
+        .data-table tbody tr:hover { background: #f8f8f8; }
+        .data-table tbody tr.atheart-row { background: rgba(225,87,89,0.05); }
+        .data-table tbody tr.atheart-row:hover { background: rgba(225,87,89,0.10); }
+        .artist-badge { display: inline-flex; align-items: center; gap: 6px; }
+        .artist-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+        .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 3px; font-size: 10px; font-weight: 700; background: #f0f0f0; color: var(--text-secondary); }
+        .rank-badge.top3 { background: var(--accent-atheart); color: #fff; }
+        .footer { text-align: center; padding: 14px; font-size: 10px; color: var(--text-secondary); letter-spacing: 0.3px; }
+
+        @media (max-width: 768px) {
+            .chart-row { grid-template-columns: 1fr; }
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .filters { flex-direction: column; align-items: flex-start; }
+        }
+        @media print {
+            body { background: #fff; }
+            .dashboard-container { max-width: none; }
+            .filters { display: none; }
+            .chart-container, .kpi-card, .table-section { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div class="header-top">
+            <h1>K-pop Girl Group Competitive Analysis — <span>AtHeart</span> Focus</h1>
+        </div>
+        <div class="header-sub">2025+ Debut Female Artists | Weekly Streaming Trends in South Korea & Japan | 2026 Timeframe</div>
+        <div class="filters">
+            <div class="filter-group">
+                <label>Market</label>
+                <select id="filter-market" onchange="dashboard.applyFilters()">
+                    <option value="all">KR + JP Combined</option>
+                    <option value="KR">South Korea</option>
+                    <option value="JP">Japan</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Metric</label>
+                <select id="filter-metric" onchange="dashboard.applyFilters()">
+                    <option value="total">Total Streams</option>
+                    <option value="premium">Premium Streams</option>
+                    <option value="ad">Ad-Supported Streams</option>
+                </select>
+            </div>
+            <div class="filter-group" style="flex-basis:100%;">
+                <label>Artists</label>
+                <div class="artist-checkboxes" id="artist-chips">
+                    <!-- populated by JS -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="kpi-row" id="kpi-row"></section>
+
+    <section class="chart-row">
+        <div class="chart-container">
+            <h3>Weekly Streaming Trend — South Korea</h3>
+            <div class="chart-subtitle">Streams per week by artist</div>
+            <canvas id="chart-kr"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3>Weekly Streaming Trend — Japan</h3>
+            <div class="chart-subtitle">Streams per week by artist</div>
+            <canvas id="chart-jp"></canvas>
+        </div>
+    </section>
+
+    <section class="chart-row">
+        <div class="chart-container">
+            <h3>Cumulative Streams — 2026 YTD</h3>
+            <div class="chart-subtitle">Total accumulated streams by artist and market</div>
+            <canvas id="chart-cumulative"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3>Japan / Korea Streaming Ratio</h3>
+            <div class="chart-subtitle">JP streams as % of total (KR+JP). Higher = stronger Japan presence</div>
+            <canvas id="chart-ratio"></canvas>
+        </div>
+    </section>
+
+    <section class="chart-row full">
+        <div class="chart-container">
+            <h3>Week-over-Week Growth Rate</h3>
+            <div class="chart-subtitle">% change in total streams (KR+JP combined) vs previous week</div>
+            <canvas id="chart-growth"></canvas>
+        </div>
+    </section>
+
+    <section class="table-section">
+        <h3>Artist Summary — 2026 YTD Ranking</h3>
+        <div id="summary-table"></div>
+    </section>
+
+    <footer class="footer">
+        Data Source: Luminate / Snowflake MCP | Generated: 2026-04-08 | Prepared for Kreators Network
+    </footer>
+</div>
+
+<script>
+// ============================================================
+// DATA — columns: [total, premium, ad, week, location, artist, id]
+// Excluded: HUNTR/X, YI SEOYEON | Added: ILLIT, RESCENE, UNIS, Say My Name
+// ============================================================
+const RAW = [
+// === EXISTING ARTISTS (excluding HUNTR/X & YI SEOYEON) ===
+[16048,13870,2178,"2025-12-29","JP","AtHeart"],
+[19063,16149,2914,"2025-12-29","KR","AtHeart"],
+[49239,39807,9432,"2025-12-29","JP","Baby DONT Cry"],
+[50941,46706,4235,"2025-12-29","KR","Baby DONT Cry"],
+[6314,4391,1923,"2025-12-29","JP","HITGS"],
+[9171,9043,128,"2025-12-29","KR","HITGS"],
+[1258582,954784,303798,"2025-12-29","JP","Hearts2Hearts"],
+[2701774,2404411,297363,"2025-12-29","KR","Hearts2Hearts"],
+[198464,162198,36266,"2025-12-29","JP","KiiiKiii"],
+[513019,485514,27505,"2025-12-29","KR","KiiiKiii"],
+[822,613,209,"2025-12-29","JP","USPEER"],
+[2414,2413,1,"2025-12-29","KR","USPEER"],
+[15224,11060,4164,"2025-12-29","JP","ifeye"],
+[23250,18315,4935,"2025-12-29","KR","ifeye"],
+[40198,35103,5095,"2026-01-05","JP","AtHeart"],
+[37191,32081,5110,"2026-01-05","KR","AtHeart"],
+[118518,97137,21381,"2026-01-05","JP","Baby DONT Cry"],
+[101731,93565,8166,"2026-01-05","KR","Baby DONT Cry"],
+[14477,10470,4007,"2026-01-05","JP","HITGS"],
+[20538,20191,347,"2026-01-05","KR","HITGS"],
+[2686303,2076962,609341,"2026-01-05","JP","Hearts2Hearts"],
+[5121093,4586093,535000,"2026-01-05","KR","Hearts2Hearts"],
+[479210,398816,80394,"2026-01-05","JP","KiiiKiii"],
+[943252,901969,41283,"2026-01-05","KR","KiiiKiii"],
+[2962,2051,911,"2026-01-05","JP","USPEER"],
+[6138,5362,776,"2026-01-05","KR","USPEER"],
+[38781,28451,10330,"2026-01-05","JP","ifeye"],
+[46905,38292,8613,"2026-01-05","KR","ifeye"],
+[37733,32935,4798,"2026-01-12","JP","AtHeart"],
+[35568,30723,4845,"2026-01-12","KR","AtHeart"],
+[111911,90570,21341,"2026-01-12","JP","Baby DONT Cry"],
+[95978,88621,7357,"2026-01-12","KR","Baby DONT Cry"],
+[13651,9734,3917,"2026-01-12","JP","HITGS"],
+[19890,19752,138,"2026-01-12","KR","HITGS"],
+[2514559,1932636,581923,"2026-01-12","JP","Hearts2Hearts"],
+[5249820,4668343,581477,"2026-01-12","KR","Hearts2Hearts"],
+[501673,402698,98975,"2026-01-12","JP","KiiiKiii"],
+[1058062,967846,90216,"2026-01-12","KR","KiiiKiii"],
+[1861,1362,499,"2026-01-12","JP","USPEER"],
+[5593,5263,330,"2026-01-12","KR","USPEER"],
+[38165,27276,10889,"2026-01-12","JP","ifeye"],
+[47068,37399,9669,"2026-01-12","KR","ifeye"],
+[37204,31632,5572,"2026-01-19","JP","AtHeart"],
+[32745,27976,4769,"2026-01-19","KR","AtHeart"],
+[108073,87758,20315,"2026-01-19","JP","Baby DONT Cry"],
+[86680,78948,7732,"2026-01-19","KR","Baby DONT Cry"],
+[12961,9259,3702,"2026-01-19","JP","HITGS"],
+[18275,18221,54,"2026-01-19","KR","HITGS"],
+[2497346,1908289,589057,"2026-01-19","JP","Hearts2Hearts"],
+[5022141,4461990,560151,"2026-01-19","KR","Hearts2Hearts"],
+[499009,405001,94008,"2026-01-19","JP","KiiiKiii"],
+[985106,915700,69406,"2026-01-19","KR","KiiiKiii"],
+[1788,1388,400,"2026-01-19","JP","USPEER"],
+[4995,4871,124,"2026-01-19","KR","USPEER"],
+[39135,27717,11418,"2026-01-19","JP","ifeye"],
+[45125,36286,8839,"2026-01-19","KR","ifeye"],
+[41440,34784,6656,"2026-01-26","JP","AtHeart"],
+[36308,31632,4676,"2026-01-26","KR","AtHeart"],
+[113353,92961,20392,"2026-01-26","JP","Baby DONT Cry"],
+[88860,81028,7832,"2026-01-26","KR","Baby DONT Cry"],
+[13768,9632,4136,"2026-01-26","JP","HITGS"],
+[27566,27486,80,"2026-01-26","KR","HITGS"],
+[2607808,1986689,621119,"2026-01-26","JP","Hearts2Hearts"],
+[5172965,4617628,555337,"2026-01-26","KR","Hearts2Hearts"],
+[2266947,1826300,440647,"2026-01-26","JP","KiiiKiii"],
+[7633583,6854170,779413,"2026-01-26","KR","KiiiKiii"],
+[1598,1152,446,"2026-01-26","JP","USPEER"],
+[5319,5127,192,"2026-01-26","KR","USPEER"],
+[37570,26353,11217,"2026-01-26","JP","ifeye"],
+[55976,45645,10331,"2026-01-26","KR","ifeye"],
+[38480,33018,5462,"2026-02-02","JP","AtHeart"],
+[37735,32879,4856,"2026-02-02","KR","AtHeart"],
+[103764,85801,17963,"2026-02-02","JP","Baby DONT Cry"],
+[88129,79748,8381,"2026-02-02","KR","Baby DONT Cry"],
+[18080,14674,3406,"2026-02-02","JP","HITGS"],
+[61825,61674,151,"2026-02-02","KR","HITGS"],
+[2616401,1990126,626275,"2026-02-02","JP","Hearts2Hearts"],
+[5447885,4877812,570073,"2026-02-02","KR","Hearts2Hearts"],
+[2633079,2140050,493029,"2026-02-02","JP","KiiiKiii"],
+[9624809,8891423,733386,"2026-02-02","KR","KiiiKiii"],
+[2074,1686,388,"2026-02-02","JP","USPEER"],
+[5407,5403,4,"2026-02-02","KR","USPEER"],
+[38356,27715,10641,"2026-02-02","JP","ifeye"],
+[59606,51254,8352,"2026-02-02","KR","ifeye"],
+[38206,32513,5693,"2026-02-09","JP","AtHeart"],
+[37163,31818,5345,"2026-02-09","KR","AtHeart"],
+[98899,82480,16419,"2026-02-09","JP","Baby DONT Cry"],
+[88452,81297,7155,"2026-02-09","KR","Baby DONT Cry"],
+[27758,23103,4655,"2026-02-09","JP","HITGS"],
+[156148,156109,39,"2026-02-09","KR","HITGS"],
+[2557424,1904138,653286,"2026-02-09","JP","Hearts2Hearts"],
+[5859423,5238401,621022,"2026-02-09","KR","Hearts2Hearts"],
+[2864040,2328630,535410,"2026-02-09","JP","KiiiKiii"],
+[11588823,10781675,807148,"2026-02-09","KR","KiiiKiii"],
+[1469,1056,413,"2026-02-09","JP","USPEER"],
+[6135,6129,6,"2026-02-09","KR","USPEER"],
+[39428,27302,12126,"2026-02-09","JP","ifeye"],
+[55538,45579,9959,"2026-02-09","KR","ifeye"],
+[38702,33454,5248,"2026-02-16","JP","AtHeart"],
+[33312,28611,4701,"2026-02-16","KR","AtHeart"],
+[92659,78400,14259,"2026-02-16","JP","Baby DONT Cry"],
+[82230,76653,5577,"2026-02-16","KR","Baby DONT Cry"],
+[35840,32374,3466,"2026-02-16","JP","HITGS"],
+[178091,178042,49,"2026-02-16","KR","HITGS"],
+[3379247,2450519,928728,"2026-02-16","JP","Hearts2Hearts"],
+[8654289,7502812,1151477,"2026-02-16","KR","Hearts2Hearts"],
+[2616997,2128079,488918,"2026-02-16","JP","KiiiKiii"],
+[10611681,9855998,755683,"2026-02-16","KR","KiiiKiii"],
+[1427,1043,384,"2026-02-16","JP","USPEER"],
+[5906,5895,11,"2026-02-16","KR","USPEER"],
+[37952,26773,11179,"2026-02-16","JP","ifeye"],
+[50806,40290,10516,"2026-02-16","KR","ifeye"],
+[55939,47139,8800,"2026-02-23","JP","AtHeart"],
+[62567,51551,11016,"2026-02-23","KR","AtHeart"],
+[89540,76373,13167,"2026-02-23","JP","Baby DONT Cry"],
+[91589,86513,5076,"2026-02-23","KR","Baby DONT Cry"],
+[39177,35308,3869,"2026-02-23","JP","HITGS"],
+[186862,186696,166,"2026-02-23","KR","HITGS"],
+[4957816,3804955,1152861,"2026-02-23","JP","Hearts2Hearts"],
+[14760911,13352668,1408243,"2026-02-23","KR","Hearts2Hearts"],
+[2383819,1923771,460048,"2026-02-23","JP","KiiiKiii"],
+[10261531,9616962,644569,"2026-02-23","KR","KiiiKiii"],
+[1307,907,400,"2026-02-23","JP","USPEER"],
+[7932,7921,11,"2026-02-23","KR","USPEER"],
+[37405,25360,12045,"2026-02-23","JP","ifeye"],
+[57938,47215,10723,"2026-02-23","KR","ifeye"],
+[71058,61029,10029,"2026-03-02","JP","AtHeart"],
+[72498,60150,12348,"2026-03-02","KR","AtHeart"],
+[85255,71924,13331,"2026-03-02","JP","Baby DONT Cry"],
+[89388,84785,4603,"2026-03-02","KR","Baby DONT Cry"],
+[34920,31653,3267,"2026-03-02","JP","HITGS"],
+[156769,156720,49,"2026-03-02","KR","HITGS"],
+[5421174,4262264,1158910,"2026-03-02","JP","Hearts2Hearts"],
+[14484908,13222510,1262398,"2026-03-02","KR","Hearts2Hearts"],
+[2399406,1927204,472202,"2026-03-02","JP","KiiiKiii"],
+[9301301,8738447,562854,"2026-03-02","KR","KiiiKiii"],
+[1202,851,351,"2026-03-02","JP","USPEER"],
+[8083,7978,105,"2026-03-02","KR","USPEER"],
+[35018,24626,10392,"2026-03-02","JP","ifeye"],
+[58878,41711,17167,"2026-03-02","KR","ifeye"],
+[104736,83435,21301,"2026-03-09","JP","AtHeart"],
+[135074,109434,25640,"2026-03-09","KR","AtHeart"],
+[209921,158643,51278,"2026-03-09","JP","Baby DONT Cry"],
+[264051,226226,37825,"2026-03-09","KR","Baby DONT Cry"],
+[30750,27616,3134,"2026-03-09","JP","HITGS"],
+[154854,154823,31,"2026-03-09","KR","HITGS"],
+[5227924,4115160,1112764,"2026-03-09","JP","Hearts2Hearts"],
+[14156538,12885144,1271394,"2026-03-09","KR","Hearts2Hearts"],
+[2303578,1851003,452575,"2026-03-09","JP","KiiiKiii"],
+[9174704,8586681,588023,"2026-03-09","KR","KiiiKiii"],
+[1268,980,288,"2026-03-09","JP","USPEER"],
+[8267,7832,435,"2026-03-09","KR","USPEER"],
+[33095,23862,9233,"2026-03-09","JP","ifeye"],
+[50878,39575,11303,"2026-03-09","KR","ifeye"],
+[118101,98998,19103,"2026-03-16","JP","AtHeart"],
+[153395,128521,24874,"2026-03-16","KR","AtHeart"],
+[230883,187424,43459,"2026-03-16","JP","Baby DONT Cry"],
+[243066,213937,29129,"2026-03-16","KR","Baby DONT Cry"],
+[26518,23601,2917,"2026-03-16","JP","HITGS"],
+[126583,126552,31,"2026-03-16","KR","HITGS"],
+[5323444,4141124,1182320,"2026-03-16","JP","Hearts2Hearts"],
+[13263218,12003021,1260197,"2026-03-16","KR","Hearts2Hearts"],
+[2156889,1732239,424650,"2026-03-16","JP","KiiiKiii"],
+[8754126,8198989,555137,"2026-03-16","KR","KiiiKiii"],
+[1268,924,344,"2026-03-16","JP","USPEER"],
+[6604,6598,6,"2026-03-16","KR","USPEER"],
+[32703,22712,9991,"2026-03-16","JP","ifeye"],
+[163581,40933,122648,"2026-03-16","KR","ifeye"],
+[102636,85850,16786,"2026-03-23","JP","AtHeart"],
+[269647,114649,154998,"2026-03-23","KR","AtHeart"],
+[345303,281222,64081,"2026-03-23","JP","Baby DONT Cry"],
+[1141571,627152,514419,"2026-03-23","KR","Baby DONT Cry"],
+[23219,20472,2747,"2026-03-23","JP","HITGS"],
+[105457,105427,30,"2026-03-23","KR","HITGS"],
+[5030958,3788686,1242272,"2026-03-23","JP","Hearts2Hearts"],
+[12469037,11274980,1194057,"2026-03-23","KR","Hearts2Hearts"],
+[2075914,1624119,451795,"2026-03-23","JP","KiiiKiii"],
+[8106268,7622021,484247,"2026-03-23","KR","KiiiKiii"],
+[1263,966,297,"2026-03-23","JP","USPEER"],
+[6957,6642,315,"2026-03-23","KR","USPEER"],
+[31558,22760,8798,"2026-03-23","JP","ifeye"],
+[69842,38202,31640,"2026-03-23","KR","ifeye"],
+[83364,69371,13993,"2026-03-30","JP","AtHeart"],
+[311123,90931,220192,"2026-03-30","KR","AtHeart"],
+[287792,240929,46863,"2026-03-30","JP","Baby DONT Cry"],
+[835730,562323,273407,"2026-03-30","KR","Baby DONT Cry"],
+[18244,15927,2317,"2026-03-30","JP","HITGS"],
+[76630,76609,21,"2026-03-30","KR","HITGS"],
+[4054913,3055829,999084,"2026-03-30","JP","Hearts2Hearts"],
+[10484682,9498158,986524,"2026-03-30","KR","Hearts2Hearts"],
+[1643806,1302844,340962,"2026-03-30","JP","KiiiKiii"],
+[6151592,5796247,355345,"2026-03-30","KR","KiiiKiii"],
+[916,678,238,"2026-03-30","JP","USPEER"],
+[6228,5630,598,"2026-03-30","KR","USPEER"],
+[26509,19728,6781,"2026-03-30","JP","ifeye"],
+[39433,28785,10648,"2026-03-30","KR","ifeye"],
+// === NEW ARTISTS ===
+[9696627,6945251,2751376,"2025-12-29","JP","ILLIT"],
+[8856408,7913220,943188,"2025-12-29","KR","ILLIT"],
+[192910,155656,37254,"2025-12-29","JP","RESCENE"],
+[495155,458417,36738,"2025-12-29","KR","RESCENE"],
+[297271,199700,97571,"2025-12-29","JP","Say My Name"],
+[411121,286380,124741,"2025-12-29","KR","Say My Name"],
+[147638,91642,55996,"2025-12-29","JP","UNIS"],
+[89349,69462,19887,"2025-12-29","KR","UNIS"],
+[10858318,7886659,2971659,"2026-01-05","JP","ILLIT"],
+[8587018,7698372,888646,"2026-01-05","KR","ILLIT"],
+[248717,203440,45277,"2026-01-05","JP","RESCENE"],
+[521371,481073,40298,"2026-01-05","KR","RESCENE"],
+[355307,265048,90259,"2026-01-05","JP","Say My Name"],
+[317896,249716,68180,"2026-01-05","KR","Say My Name"],
+[152341,103021,49320,"2026-01-05","JP","UNIS"],
+[87257,72577,14680,"2026-01-05","KR","UNIS"],
+[10904686,7836815,3067871,"2026-01-12","JP","ILLIT"],
+[8900374,7905836,994538,"2026-01-12","KR","ILLIT"],
+[239816,196696,43120,"2026-01-12","JP","RESCENE"],
+[528333,486396,41937,"2026-01-12","KR","RESCENE"],
+[390515,292407,98108,"2026-01-12","JP","Say My Name"],
+[242658,190996,51662,"2026-01-12","KR","Say My Name"],
+[147079,102750,44329,"2026-01-12","JP","UNIS"],
+[81779,68735,13044,"2026-01-12","KR","UNIS"],
+[10169804,7403785,2766019,"2026-01-19","JP","ILLIT"],
+[8090214,7219773,870441,"2026-01-19","KR","ILLIT"],
+[319873,261715,58158,"2026-01-19","JP","RESCENE"],
+[547626,505801,41825,"2026-01-19","KR","RESCENE"],
+[321466,255606,65860,"2026-01-19","JP","Say My Name"],
+[235705,194265,41440,"2026-01-19","KR","Say My Name"],
+[163613,118668,44945,"2026-01-19","JP","UNIS"],
+[75738,64475,11263,"2026-01-19","KR","UNIS"],
+[9834350,7107424,2726926,"2026-01-26","JP","ILLIT"],
+[7914229,7059197,855032,"2026-01-26","KR","ILLIT"],
+[331437,276841,54596,"2026-01-26","JP","RESCENE"],
+[573146,531264,41882,"2026-01-26","KR","RESCENE"],
+[300645,237351,63294,"2026-01-26","JP","Say My Name"],
+[312907,270146,42761,"2026-01-26","KR","Say My Name"],
+[153015,108256,44759,"2026-01-26","JP","UNIS"],
+[78606,68501,10105,"2026-01-26","KR","UNIS"],
+[9453709,6734344,2719365,"2026-02-02","JP","ILLIT"],
+[8016979,7154170,862809,"2026-02-02","KR","ILLIT"],
+[295326,242285,53041,"2026-02-02","JP","RESCENE"],
+[586793,544411,42382,"2026-02-02","KR","RESCENE"],
+[263035,205554,57481,"2026-02-02","JP","Say My Name"],
+[293659,246852,46807,"2026-02-02","KR","Say My Name"],
+[138786,93685,45101,"2026-02-02","JP","UNIS"],
+[72492,61731,10761,"2026-02-02","KR","UNIS"],
+[9652864,6876594,2776270,"2026-02-09","JP","ILLIT"],
+[8311085,7470276,840809,"2026-02-09","KR","ILLIT"],
+[275882,222848,53034,"2026-02-09","JP","RESCENE"],
+[582890,542485,40405,"2026-02-09","KR","RESCENE"],
+[258717,199066,59651,"2026-02-09","JP","Say My Name"],
+[247246,206705,40541,"2026-02-09","KR","Say My Name"],
+[129879,80085,49794,"2026-02-09","JP","UNIS"],
+[61786,51726,10060,"2026-02-09","KR","UNIS"],
+[8880124,6412403,2467721,"2026-02-16","JP","ILLIT"],
+[7785043,6990000,795043,"2026-02-16","KR","ILLIT"],
+[258400,209695,48705,"2026-02-16","JP","RESCENE"],
+[515332,474031,41301,"2026-02-16","KR","RESCENE"],
+[233176,183449,49727,"2026-02-16","JP","Say My Name"],
+[183479,150320,33159,"2026-02-16","KR","Say My Name"],
+[115553,76357,39196,"2026-02-16","JP","UNIS"],
+[50752,41104,9648,"2026-02-16","KR","UNIS"],
+[8168719,5913102,2255617,"2026-02-23","JP","ILLIT"],
+[7975140,7221289,753851,"2026-02-23","KR","ILLIT"],
+[271375,222916,48459,"2026-02-23","JP","RESCENE"],
+[593373,550449,42924,"2026-02-23","KR","RESCENE"],
+[211462,163943,47519,"2026-02-23","JP","Say My Name"],
+[182721,147440,35281,"2026-02-23","KR","Say My Name"],
+[111523,75527,35996,"2026-02-23","JP","UNIS"],
+[56081,47466,8615,"2026-02-23","KR","UNIS"],
+[7389239,5371143,2018096,"2026-03-02","JP","ILLIT"],
+[7190883,6533541,657342,"2026-03-02","KR","ILLIT"],
+[292084,242105,49979,"2026-03-02","JP","RESCENE"],
+[597734,557503,40231,"2026-03-02","KR","RESCENE"],
+[197466,158112,39354,"2026-03-02","JP","Say My Name"],
+[178090,131258,46832,"2026-03-02","KR","Say My Name"],
+[104071,72092,31979,"2026-03-02","JP","UNIS"],
+[56345,45794,10551,"2026-03-02","KR","UNIS"],
+[7201614,5231120,1970494,"2026-03-09","JP","ILLIT"],
+[7138802,6473068,665734,"2026-03-09","KR","ILLIT"],
+[279264,229858,49406,"2026-03-09","JP","RESCENE"],
+[585986,543708,42278,"2026-03-09","KR","RESCENE"],
+[189395,151313,38082,"2026-03-09","JP","Say My Name"],
+[155290,123995,31295,"2026-03-09","KR","Say My Name"],
+[104358,73384,30974,"2026-03-09","JP","UNIS"],
+[56196,48085,8111,"2026-03-09","KR","UNIS"],
+[7415761,5332656,2083105,"2026-03-16","JP","ILLIT"],
+[6950815,6284603,666212,"2026-03-16","KR","ILLIT"],
+[259316,216383,42933,"2026-03-16","JP","RESCENE"],
+[561213,519808,41405,"2026-03-16","KR","RESCENE"],
+[173722,137430,36292,"2026-03-16","JP","Say My Name"],
+[141791,115461,26330,"2026-03-16","KR","Say My Name"],
+[100057,70051,30006,"2026-03-16","JP","UNIS"],
+[147859,55066,92793,"2026-03-16","KR","UNIS"],
+[7571789,5435305,2136484,"2026-03-23","JP","ILLIT"],
+[6724446,6075655,648791,"2026-03-23","KR","ILLIT"],
+[246085,203180,42905,"2026-03-23","JP","RESCENE"],
+[548544,506940,41604,"2026-03-23","KR","RESCENE"],
+[165599,131268,34331,"2026-03-23","JP","Say My Name"],
+[143459,112075,31384,"2026-03-23","KR","Say My Name"],
+[98187,69406,28781,"2026-03-23","JP","UNIS"],
+[126902,60241,66661,"2026-03-23","KR","UNIS"],
+[6257925,4461313,1796612,"2026-03-30","JP","ILLIT"],
+[5423685,4907544,516141,"2026-03-30","KR","ILLIT"],
+[204831,167440,37391,"2026-03-30","JP","RESCENE"],
+[490354,455922,34432,"2026-03-30","KR","RESCENE"],
+[136786,107767,29019,"2026-03-30","JP","Say My Name"],
+[118287,96523,21764,"2026-03-30","KR","Say My Name"],
+[81960,57634,24326,"2026-03-30","JP","UNIS"],
+[61182,49955,11227,"2026-03-30","KR","UNIS"],
+// === MEOVV ===
+[954774,718465,236309,"2025-12-29","JP","MEOVV"],
+[1881274,1712019,169255,"2025-12-29","KR","MEOVV"],
+[1104426,841390,263036,"2026-01-05","JP","MEOVV"],
+[1893416,1724942,168474,"2026-01-05","KR","MEOVV"],
+[1075030,821982,253048,"2026-01-12","JP","MEOVV"],
+[1836570,1666310,170260,"2026-01-12","KR","MEOVV"],
+[1077174,827051,250123,"2026-01-19","JP","MEOVV"],
+[1691144,1528567,162577,"2026-01-19","KR","MEOVV"],
+[1035522,796693,238829,"2026-01-26","JP","MEOVV"],
+[1649561,1493195,156366,"2026-01-26","KR","MEOVV"],
+[968790,738412,230378,"2026-02-02","JP","MEOVV"],
+[1645314,1501099,144215,"2026-02-02","KR","MEOVV"],
+[976353,738733,237620,"2026-02-09","JP","MEOVV"],
+[1701724,1554544,147180,"2026-02-09","KR","MEOVV"],
+[934491,711991,222500,"2026-02-16","JP","MEOVV"],
+[1564344,1425195,139149,"2026-02-16","KR","MEOVV"],
+[913869,693083,220786,"2026-02-23","JP","MEOVV"],
+[1655201,1506383,148818,"2026-02-23","KR","MEOVV"],
+[877873,674521,203352,"2026-03-02","JP","MEOVV"],
+[1511725,1374161,137564,"2026-03-02","KR","MEOVV"],
+[830792,639920,190872,"2026-03-09","JP","MEOVV"],
+[1502017,1363066,138951,"2026-03-09","KR","MEOVV"],
+[800800,616610,184190,"2026-03-16","JP","MEOVV"],
+[1441101,1311415,129686,"2026-03-16","KR","MEOVV"],
+[798898,615216,183682,"2026-03-23","JP","MEOVV"],
+[1402635,1278959,123676,"2026-03-23","KR","MEOVV"],
+[657537,504026,153511,"2026-03-30","JP","MEOVV"],
+[1109748,1010876,98872,"2026-03-30","KR","MEOVV"]
+];
+
+// ============================================================
+// PROCESS
+// ============================================================
+// Tableau 10 palette
+const COLORS = {
+    'AtHeart':'#e15759','Hearts2Hearts':'#4e79a7','KiiiKiii':'#f28e2b',
+    'ILLIT':'#76b7b2','Baby DONT Cry':'#59a14f','ifeye':'#edc948',
+    'RESCENE':'#b07aa1','Say My Name':'#ff9da7','UNIS':'#9c755f',
+    'MEOVV':'#bab0ac','HITGS':'#a0cbe8','USPEER':'#86bcb6'
+};
+
+const DATA = RAW.map(r => ({ total:+r[0], premium:+r[1], ad:+r[2], week:r[3], location:r[4], artist:r[5] }));
+const WEEKS = [...new Set(DATA.map(d=>d.week))].sort();
+const ALL_ARTISTS = [...new Set(DATA.map(d=>d.artist))].sort();
+
+// Active artist set — all on by default
+let activeArtists = new Set(ALL_ARTISTS);
+
+// ============================================================
+// CHIP UI
+// ============================================================
+function renderChips() {
+    const container = document.getElementById('artist-chips');
+    let html = '<div class="chip-controls"><button onclick="toggleAll(true)">All</button><button onclick="toggleAll(false)">None</button><button onclick="toggleOnlyAtHeart()">AtHeart Only</button></div>';
+    ALL_ARTISTS.forEach(a => {
+        const isActive = activeArtists.has(a);
+        const isAth = a === 'AtHeart';
+        const cls = `artist-chip ${isActive?'active':''} ${isAth?'atheart-chip':''}`;
+        html += `<span class="${cls}" data-artist="${a}" onclick="toggleArtist('${a}')"><span class="chip-dot" style="background:${COLORS[a]}"></span>${a}</span>`;
+    });
+    container.innerHTML = html;
+}
+
+function toggleArtist(a) {
+    if (activeArtists.has(a)) activeArtists.delete(a); else activeArtists.add(a);
+    renderChips();
+    dashboard.applyFilters();
+}
+function toggleAll(on) {
+    if (on) activeArtists = new Set(ALL_ARTISTS); else activeArtists.clear();
+    renderChips();
+    dashboard.applyFilters();
+}
+function toggleOnlyAtHeart() {
+    activeArtists = new Set(['AtHeart']);
+    renderChips();
+    dashboard.applyFilters();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+class Dashboard {
+    constructor() { this.charts = {}; renderChips(); this.init(); }
+
+    mk() { return document.getElementById('filter-metric').value; } // total|premium|ad
+    mf() { return document.getElementById('filter-market').value; } // all|KR|JP
+    vis() { return [...activeArtists]; }
+
+    agg(loc, metric) {
+        const r = {};
+        DATA.forEach(d => {
+            if (loc !== 'all' && d.location !== loc) return;
+            const k = d.week+'|'+d.artist;
+            r[k] = (r[k]||0) + d[metric];
+        });
+        return r;
+    }
+
+    validWeeks() { return WEEKS.filter(w => DATA.some(d => d.week===w && d.total>0)); }
+
+    init() { this.renderKPIs(); this.renderTrends(); this.renderCumulative(); this.renderRatio(); this.renderGrowth(); this.renderTable(); }
+
+    applyFilters() {
+        Object.values(this.charts).forEach(c=>c.destroy());
+        this.charts = {};
+        this.init();
+    }
+
+    renderKPIs() {
+        const m = this.mk(), mkt = this.mf(), vw = this.validWeeks();
+        const lastW = vw[vw.length-1], prevW = vw[vw.length-2];
+        let athTot=0, athLast=0, athPrev=0, mktTot=0;
+        const artTotals = {};
+        DATA.forEach(d => {
+            if (d.total===0) return;
+            if (mkt!=='all' && d.location!==mkt) return;
+            mktTot += d[m];
+            artTotals[d.artist] = (artTotals[d.artist]||0)+d[m];
+            if (d.artist==='AtHeart') { athTot+=d[m]; if(d.week===lastW) athLast+=d[m]; if(d.week===prevW) athPrev+=d[m]; }
+        });
+        const ranked = Object.entries(artTotals).sort((a,b)=>b[1]-a[1]);
+        const athRank = ranked.findIndex(e=>e[0]==='AtHeart')+1;
+        const athShare = mktTot>0?(athTot/mktTot*100):0;
+        const wow = athPrev>0?((athLast-athPrev)/athPrev*100):0;
+        document.getElementById('kpi-row').innerHTML = `
+            <div class="kpi-card highlight"><div class="kpi-label">AtHeart — 2026 YTD</div><div class="kpi-value">${fmt(athTot)}</div><div class="kpi-change ${wow>=0?'positive':'negative'}">${wow>=0?'+':''}${wow.toFixed(1)}% WoW</div></div>
+            <div class="kpi-card"><div class="kpi-label">Rank</div><div class="kpi-value">#${athRank} <span style="font-size:13px;color:#999">/ ${ranked.length}</span></div><div class="kpi-change" style="color:#999">${mkt==='all'?'KR + JP':mkt==='KR'?'South Korea':'Japan'}</div></div>
+            <div class="kpi-card"><div class="kpi-label">Market Share</div><div class="kpi-value">${athShare.toFixed(2)}%</div><div class="kpi-change" style="color:#999">of competitive set</div></div>
+            <div class="kpi-card"><div class="kpi-label">Latest Week</div><div class="kpi-value">${fmt(athLast)}</div><div class="kpi-change" style="color:#999">${lastW}</div></div>`;
+    }
+
+    lineOpts(yFmt) {
+        return {
+            responsive:true, maintainAspectRatio:false,
+            interaction:{mode:'index',intersect:false},
+            plugins:{
+                legend:{position:'bottom',labels:{usePointStyle:true,padding:12,color:'#555',font:{size:11,family:"'Segoe UI',Arial,sans-serif"}}},
+                tooltip:{backgroundColor:'#fff',titleColor:'#333',bodyColor:'#555',borderColor:'#d4d4d4',borderWidth:1,titleFont:{weight:'600'},bodyFont:{size:11},padding:10,cornerRadius:3,boxPadding:4,
+                    callbacks:{label:ctx=>`${ctx.dataset.label}: ${yFmt?yFmt(ctx.parsed.y):fmt(ctx.parsed.y)}`}}
+            },
+            scales:{
+                x:{grid:{color:'#ececec',drawBorder:false},ticks:{color:'#767676',font:{size:10}},border:{color:'#d4d4d4'}},
+                y:{beginAtZero:true,grid:{color:'#ececec',drawBorder:false},ticks:{color:'#767676',font:{size:10},callback:v=>yFmt?yFmt(v):fmt(v)},border:{color:'#d4d4d4'}}
+            }
+        };
+    }
+
+    ds(artist, data) {
+        const is = artist==='AtHeart';
+        return {label:artist,data,borderColor:COLORS[artist],backgroundColor:COLORS[artist]+'20',borderWidth:is?3.5:1.5,pointRadius:is?5:2,pointHoverRadius:7,tension:0.3,fill:false,order:is?0:1,pointStyle:is?'rectRot':'circle'};
+    }
+
+    renderTrends() {
+        const m=this.mk(), vis=this.vis(), vw=this.validWeeks();
+        ['KR','JP'].forEach(loc => {
+            const id='chart-'+loc.toLowerCase(), a=this.agg(loc,m);
+            const datasets = vis.map(art => this.ds(art, vw.map(w=>a[w+'|'+art]||0)));
+            this.charts[id] = new Chart(document.getElementById(id),{type:'line',data:{labels:vw.map(w=>w.substring(5)),datasets},options:this.lineOpts()});
+        });
+    }
+
+    renderCumulative() {
+        const m=this.mk(), vis=this.vis();
+        const labels=[], krT=[], jpT=[];
+        vis.forEach(art => {
+            let kr=0,jp=0;
+            DATA.forEach(d=>{if(d.artist!==art||d.total===0)return;if(d.location==='KR')kr+=d[m];if(d.location==='JP')jp+=d[m];});
+            labels.push(art); krT.push(kr); jpT.push(jp);
+        });
+        const idx=labels.map((_,i)=>i).sort((a,b)=>(krT[b]+jpT[b])-(krT[a]+jpT[a]));
+        const sL=idx.map(i=>labels[i]),sK=idx.map(i=>krT[i]),sJ=idx.map(i=>jpT[i]);
+        const bgK=sL.map(l=>l==='AtHeart'?'#e15759':'#4e79a7'), bgJ=sL.map(l=>l==='AtHeart'?'rgba(225,87,89,0.5)':'rgba(78,121,167,0.5)');
+        this.charts['chart-cumulative']=new Chart(document.getElementById('chart-cumulative'),{type:'bar',data:{labels:sL,datasets:[{label:'South Korea',data:sK,backgroundColor:bgK,borderRadius:3},{label:'Japan',data:sJ,backgroundColor:bgJ,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{color:'#555',font:{size:11}}},tooltip:{backgroundColor:'#fff',titleColor:'#333',bodyColor:'#555',borderColor:'#d4d4d4',borderWidth:1,cornerRadius:3,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.parsed.x)}`}}},scales:{x:{stacked:true,grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10},callback:v=>fmt(v)},border:{color:'#d4d4d4'}},y:{stacked:true,grid:{display:false},ticks:{color:'#333',font:{size:11}},border:{color:'#d4d4d4'}}}}});
+    }
+
+    renderRatio() {
+        const m=this.mk(), vis=this.vis(), vw=this.validWeeks();
+        const datasets=vis.map(art=>{
+            const ratios=vw.map(w=>{let kr=0,jp=0;DATA.forEach(d=>{if(d.artist!==art||d.week!==w)return;if(d.location==='KR')kr+=d[m];if(d.location==='JP')jp+=d[m];});const t=kr+jp;return t>0?(jp/t*100):0;});
+            return this.ds(art,ratios);
+        });
+        this.charts['chart-ratio']=new Chart(document.getElementById('chart-ratio'),{type:'line',data:{labels:vw.map(w=>w.substring(5)),datasets},options:{...this.lineOpts(v=>v.toFixed(1)+'%'),scales:{x:{grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10}},border:{color:'#d4d4d4'}},y:{min:0,max:100,grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10},callback:v=>v+'%'},border:{color:'#d4d4d4'}}}}});
+    }
+
+    renderGrowth() {
+        const m=this.mk(), vis=this.vis(), vw=this.validWeeks(), a=this.agg('all',m), gw=vw.slice(1);
+        const datasets=vis.map(art=>{
+            const g=gw.map((w,i)=>{const p=a[vw[i]+'|'+art]||0,c=a[w+'|'+art]||0;return p>0?((c-p)/p*100):0;});
+            return this.ds(art,g);
+        });
+        this.charts['chart-growth']=new Chart(document.getElementById('chart-growth'),{type:'line',data:{labels:gw.map(w=>w.substring(5)),datasets},options:{...this.lineOpts(v=>(v>=0?'+':'')+v.toFixed(1)+'%'),scales:{x:{grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10}},border:{color:'#d4d4d4'}},y:{grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10},callback:v=>v+'%'},border:{color:'#d4d4d4'}}}}});
+    }
+
+    renderTable() {
+        const m=this.mk(), mkt=this.mf(), vw=this.validWeeks();
+        const lastW=vw[vw.length-1], prevW=vw[vw.length-2];
+        const stats={};
+        ALL_ARTISTS.forEach(art=>{let t=0,kr=0,jp=0,lw=0,pw=0;DATA.forEach(d=>{if(d.artist!==art||d.total===0)return;if(mkt!=='all'&&d.location!==mkt)return;t+=d[m];if(d.location==='KR')kr+=d[m];if(d.location==='JP')jp+=d[m];if(d.week===lastW)lw+=d[m];if(d.week===prevW)pw+=d[m];});stats[art]={t,kr,jp,lw,wow:pw>0?((lw-pw)/pw*100):0,jpR:(kr+jp)>0?(jp/(kr+jp)*100):0};});
+        const sorted=Object.entries(stats).sort((a,b)=>b[1].t-a[1].t);
+        let h='<table class="data-table"><thead><tr><th>Rank</th><th>Artist</th><th>Total Streams</th><th>KR</th><th>JP</th><th>JP Ratio</th><th>Latest Week</th><th>WoW %</th></tr></thead><tbody>';
+        sorted.forEach(([art,s],i)=>{
+            const isA=art==='AtHeart';
+            h+=`<tr${isA?' class="atheart-row"':''}>`;
+            h+=`<td><span class="rank-badge${i<3?' top3':''}">${i+1}</span></td>`;
+            h+=`<td><span class="artist-badge"><span class="artist-dot" style="background:${COLORS[art]}"></span>${isA?'<strong>'+art+'</strong>':art}</span></td>`;
+            h+=`<td>${fmt(s.t)}</td><td>${fmt(s.kr)}</td><td>${fmt(s.jp)}</td><td>${s.jpR.toFixed(1)}%</td><td>${fmt(s.lw)}</td>`;
+            h+=`<td style="color:${s.wow>=0?'var(--positive)':'var(--negative)'}">${s.wow>=0?'+':''}${s.wow.toFixed(1)}%</td></tr>`;
+        });
+        h+='</tbody></table>';
+        document.getElementById('summary-table').innerHTML=h;
+    }
+}
+
+function fmt(n){if(n>=1e9)return(n/1e9).toFixed(2)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n.toLocaleString();}
+
+const dashboard = new Dashboard();
+</script>
+</body>
+</html>
