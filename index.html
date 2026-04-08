@@ -163,6 +163,14 @@
         </div>
     </section>
 
+    <section class="chart-row full">
+        <div class="chart-container">
+            <h3>Instagram Followers — Weekly Trend</h3>
+            <div class="chart-subtitle">Follower count by artist per week (Say My Name, USPEER excluded — no IG data)</div>
+            <canvas id="chart-ig"></canvas>
+        </div>
+    </section>
+
     <section class="table-section">
         <h3>Artist Summary — 2026 YTD Ranking</h3>
         <div id="summary-table"></div>
@@ -523,6 +531,29 @@ const RAW = [
 // ============================================================
 // PROCESS
 // ============================================================
+// ============================================================
+// INSTAGRAM DATA — [week, artist, followers]
+// ============================================================
+const IG_RAW = [
+["2025-12-29","AtHeart",132130],["2025-12-29","Baby DONT Cry",286015],["2025-12-29","HITGS",131201],["2025-12-29","Hearts2Hearts",3109837],["2025-12-29","ILLIT",5665677],["2025-12-29","KiiiKiii",737024],["2025-12-29","MEOVV",2534275],["2025-12-29","RESCENE",240075],["2025-12-29","UNIS",2110567],["2025-12-29","ifeye",252980],
+["2026-01-05","AtHeart",133344],["2026-01-05","Baby DONT Cry",286856],["2026-01-05","HITGS",129001],["2026-01-05","Hearts2Hearts",3148372],["2026-01-05","ILLIT",5736365],["2026-01-05","KiiiKiii",750888],["2026-01-05","MEOVV",2548339],["2026-01-05","RESCENE",241352],["2026-01-05","UNIS",2107792],["2026-01-05","ifeye",254354],
+["2026-01-12","AtHeart",134815],["2026-01-12","Baby DONT Cry",288738],["2026-01-12","HITGS",128075],["2026-01-12","Hearts2Hearts",3182686],["2026-01-12","ILLIT",5808032],["2026-01-12","KiiiKiii",773934],["2026-01-12","MEOVV",2561331],["2026-01-12","RESCENE",242705],["2026-01-12","UNIS",2094526],["2026-01-12","ifeye",255254],
+["2026-01-19","AtHeart",138986],["2026-01-19","Baby DONT Cry",298427],["2026-01-19","HITGS",126761],["2026-01-19","Hearts2Hearts",3213389],["2026-01-19","ILLIT",5860578],["2026-01-19","KiiiKiii",798485],["2026-01-19","MEOVV",2576990],["2026-01-19","RESCENE",245412],["2026-01-19","UNIS",2091556],["2026-01-19","ifeye",255659],
+["2026-01-26","AtHeart",143436],["2026-01-26","Baby DONT Cry",306515],["2026-01-26","HITGS",123739],["2026-01-26","Hearts2Hearts",3242663],["2026-01-26","ILLIT",5910009],["2026-01-26","KiiiKiii",840048],["2026-01-26","MEOVV",2585818],["2026-01-26","RESCENE",246727],["2026-01-26","UNIS",2088041],["2026-01-26","ifeye",256057],
+["2026-02-02","AtHeart",146552],["2026-02-02","Baby DONT Cry",308456],["2026-02-02","HITGS",122077],["2026-02-02","Hearts2Hearts",3274378],["2026-02-02","ILLIT",5963252],["2026-02-02","KiiiKiii",892204],["2026-02-02","MEOVV",2591847],["2026-02-02","RESCENE",248200],["2026-02-02","UNIS",2085785],["2026-02-02","ifeye",256561],
+["2026-02-09","AtHeart",148715],["2026-02-09","Baby DONT Cry",310317],["2026-02-09","HITGS",120617],["2026-02-09","Hearts2Hearts",3308329],["2026-02-09","ILLIT",6005004],["2026-02-09","KiiiKiii",948649],["2026-02-09","MEOVV",2597028],["2026-02-09","RESCENE",249985],["2026-02-09","UNIS",2083009],["2026-02-09","ifeye",258178],
+["2026-02-16","AtHeart",150689],["2026-02-16","Baby DONT Cry",313042],["2026-02-16","HITGS",119818],["2026-02-16","Hearts2Hearts",3385559],["2026-02-16","ILLIT",6048058],["2026-02-16","KiiiKiii",997015],["2026-02-16","MEOVV",2614558],["2026-02-16","RESCENE",251344],["2026-02-16","UNIS",2079866],["2026-02-16","ifeye",258569],
+["2026-02-23","AtHeart",155773],["2026-02-23","Baby DONT Cry",314605],["2026-02-23","HITGS",119242],["2026-02-23","Hearts2Hearts",3498649],["2026-02-23","ILLIT",6084289],["2026-02-23","KiiiKiii",1034835],["2026-02-23","MEOVV",2626004],["2026-02-23","RESCENE",253190],["2026-02-23","UNIS",2076828],["2026-02-23","ifeye",258814],
+["2026-03-02","AtHeart",157078],["2026-03-02","Baby DONT Cry",317684],["2026-03-02","HITGS",118663],["2026-03-02","Hearts2Hearts",3638270],["2026-03-02","ILLIT",6113742],["2026-03-02","KiiiKiii",1077313],["2026-03-02","MEOVV",2638185],["2026-03-02","RESCENE",255006],["2026-03-02","UNIS",2077745],["2026-03-02","ifeye",258805],
+["2026-03-09","AtHeart",161774],["2026-03-09","Baby DONT Cry",323775],["2026-03-09","HITGS",118123],["2026-03-09","Hearts2Hearts",3777803],["2026-03-09","ILLIT",6160304],["2026-03-09","KiiiKiii",1112683],["2026-03-09","MEOVV",2656370],["2026-03-09","RESCENE",256756],["2026-03-09","UNIS",2073236],["2026-03-09","ifeye",258713],
+["2026-03-16","AtHeart",168801],["2026-03-16","Baby DONT Cry",329382],["2026-03-16","HITGS",117682],["2026-03-16","Hearts2Hearts",3911403],["2026-03-16","ILLIT",6200032],["2026-03-16","KiiiKiii",1146073],["2026-03-16","MEOVV",2670441],["2026-03-16","RESCENE",257901],["2026-03-16","UNIS",2069870],["2026-03-16","ifeye",258349],
+["2026-03-23","AtHeart",172397],["2026-03-23","Baby DONT Cry",397054],["2026-03-23","HITGS",117175],["2026-03-23","Hearts2Hearts",4063729],["2026-03-23","ILLIT",6235859],["2026-03-23","KiiiKiii",1174010],["2026-03-23","MEOVV",2678943],["2026-03-23","RESCENE",260220],["2026-03-23","UNIS",2067563],["2026-03-23","ifeye",258537],
+["2026-03-30","AtHeart",181672],["2026-03-30","Baby DONT Cry",485963],["2026-03-30","HITGS",116578],["2026-03-30","Hearts2Hearts",4276598],["2026-03-30","ILLIT",6267843],["2026-03-30","KiiiKiii",1205688],["2026-03-30","MEOVV",2687440],["2026-03-30","RESCENE",263401],["2026-03-30","UNIS",2065513],["2026-03-30","ifeye",258488]
+];
+const IG_DATA = IG_RAW.map(r=>({week:r[0],artist:r[1],followers:+r[2]}));
+const IG_WEEKS = [...new Set(IG_DATA.map(d=>d.week))].sort();
+const IG_ARTISTS = [...new Set(IG_DATA.map(d=>d.artist))].sort();
+
 // Tableau 10 palette
 const COLORS = {
     'AtHeart':'#e15759','Hearts2Hearts':'#4e79a7','KiiiKiii':'#f28e2b',
@@ -591,7 +622,7 @@ class Dashboard {
 
     validWeeks() { return WEEKS.filter(w => DATA.some(d => d.week===w && d.total>0)); }
 
-    init() { this.renderKPIs(); this.renderTrends(); this.renderCumulative(); this.renderRatio(); this.renderGrowth(); this.renderTable(); }
+    init() { this.renderKPIs(); this.renderTrends(); this.renderCumulative(); this.renderRatio(); this.renderGrowth(); this.renderIG(); this.renderTable(); }
 
     applyFilters() {
         Object.values(this.charts).forEach(c=>c.destroy());
@@ -682,6 +713,45 @@ class Dashboard {
             return this.ds(art,g);
         });
         this.charts['chart-growth']=new Chart(document.getElementById('chart-growth'),{type:'line',data:{labels:gw.map(w=>w.substring(5)),datasets},options:{...this.lineOpts(v=>(v>=0?'+':'')+v.toFixed(1)+'%'),scales:{x:{grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10}},border:{color:'#d4d4d4'}},y:{grid:{color:'#ececec'},ticks:{color:'#767676',font:{size:10},callback:v=>v+'%'},border:{color:'#d4d4d4'}}}}});
+    }
+
+    renderIG() {
+        const vis = this.vis().filter(a => IG_ARTISTS.includes(a));
+        const igAgg = {};
+        IG_DATA.forEach(d => { igAgg[d.week+'|'+d.artist] = d.followers; });
+        const datasets = vis.map(art => {
+            const isA = art==='AtHeart';
+            return {
+                label: art,
+                data: IG_WEEKS.map(w => igAgg[w+'|'+art] || 0),
+                borderColor: COLORS[art],
+                backgroundColor: COLORS[art]+'20',
+                borderWidth: isA ? 3.5 : 1.5,
+                pointRadius: isA ? 5 : 2,
+                pointHoverRadius: 7,
+                tension: 0.3,
+                fill: false,
+                order: isA ? 0 : 1,
+                pointStyle: isA ? 'rectRot' : 'circle'
+            };
+        });
+        this.charts['chart-ig'] = new Chart(document.getElementById('chart-ig'), {
+            type: 'line',
+            data: { labels: IG_WEEKS.map(w => w.substring(5)), datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 12, color: '#555', font: { size: 11 } } },
+                    tooltip: { backgroundColor: '#fff', titleColor: '#333', bodyColor: '#555', borderColor: '#d4d4d4', borderWidth: 1, cornerRadius: 3, padding: 10, boxPadding: 4,
+                        callbacks: { label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}` } }
+                },
+                scales: {
+                    x: { grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 } }, border: { color: '#d4d4d4' } },
+                    y: { beginAtZero: false, grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 }, callback: v => fmt(v) }, border: { color: '#d4d4d4' } }
+                }
+            }
+        });
     }
 
     renderTable() {
