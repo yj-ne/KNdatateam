@@ -165,8 +165,8 @@
 
     <section class="chart-row full">
         <div class="chart-container">
-            <h3>Instagram Followers — Weekly Trend</h3>
-            <div class="chart-subtitle">Follower count by artist per week (Say My Name, USPEER excluded — no IG data)</div>
+            <h3>Instagram Followers — Cumulative</h3>
+            <div class="chart-subtitle">Total follower count per week (USPEER excluded — no IG data)</div>
             <canvas id="chart-ig"></canvas>
         </div>
     </section>
@@ -548,7 +548,9 @@ const IG_RAW = [
 ["2026-03-09","AtHeart",161774],["2026-03-09","Baby DONT Cry",323775],["2026-03-09","HITGS",118123],["2026-03-09","Hearts2Hearts",3777803],["2026-03-09","ILLIT",6160304],["2026-03-09","KiiiKiii",1112683],["2026-03-09","MEOVV",2656370],["2026-03-09","RESCENE",256756],["2026-03-09","UNIS",2073236],["2026-03-09","ifeye",258713],
 ["2026-03-16","AtHeart",168801],["2026-03-16","Baby DONT Cry",329382],["2026-03-16","HITGS",117682],["2026-03-16","Hearts2Hearts",3911403],["2026-03-16","ILLIT",6200032],["2026-03-16","KiiiKiii",1146073],["2026-03-16","MEOVV",2670441],["2026-03-16","RESCENE",257901],["2026-03-16","UNIS",2069870],["2026-03-16","ifeye",258349],
 ["2026-03-23","AtHeart",172397],["2026-03-23","Baby DONT Cry",397054],["2026-03-23","HITGS",117175],["2026-03-23","Hearts2Hearts",4063729],["2026-03-23","ILLIT",6235859],["2026-03-23","KiiiKiii",1174010],["2026-03-23","MEOVV",2678943],["2026-03-23","RESCENE",260220],["2026-03-23","UNIS",2067563],["2026-03-23","ifeye",258537],
-["2026-03-30","AtHeart",181672],["2026-03-30","Baby DONT Cry",485963],["2026-03-30","HITGS",116578],["2026-03-30","Hearts2Hearts",4276598],["2026-03-30","ILLIT",6267843],["2026-03-30","KiiiKiii",1205688],["2026-03-30","MEOVV",2687440],["2026-03-30","RESCENE",263401],["2026-03-30","UNIS",2065513],["2026-03-30","ifeye",258488]
+["2026-03-30","AtHeart",181672],["2026-03-30","Baby DONT Cry",485963],["2026-03-30","HITGS",116578],["2026-03-30","Hearts2Hearts",4276598],["2026-03-30","ILLIT",6267843],["2026-03-30","KiiiKiii",1205688],["2026-03-30","MEOVV",2687440],["2026-03-30","RESCENE",263401],["2026-03-30","Say My Name",411922],["2026-03-30","UNIS",2065513],["2026-03-30","ifeye",258488],
+// Say My Name (was missing due to case mismatch: DB stores as 'SAY MY NAME')
+["2025-12-29","Say My Name",399054],["2026-01-05","Say My Name",399534],["2026-01-12","Say My Name",399287],["2026-01-19","Say My Name",400739],["2026-01-26","Say My Name",402427],["2026-02-02","Say My Name",404429],["2026-02-09","Say My Name",405799],["2026-02-16","Say My Name",406508],["2026-02-23","Say My Name",408180],["2026-03-02","Say My Name",409026],["2026-03-09","Say My Name",410198],["2026-03-16","Say My Name",411210],["2026-03-23","Say My Name",411879]
 ];
 const IG_DATA = IG_RAW.map(r=>({week:r[0],artist:r[1],followers:+r[2]}));
 const IG_WEEKS = [...new Set(IG_DATA.map(d=>d.week))].sort();
