@@ -184,13 +184,31 @@
         </div>
     </section>
 
+    <section class="chart-row full">
+        <div class="chart-container">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:2px;">
+                <h3 id="matrix-title">Social vs Streaming Matrix</h3>
+                <div class="filter-group" style="flex-direction:row;align-items:center;gap:6px;">
+                    <label style="margin:0;">Platform</label>
+                    <select id="filter-social-platform" onchange="dashboard.applyFilters()" style="padding:4px 8px;border:1px solid #c8c8c8;border-radius:3px;font-size:11px;cursor:pointer;">
+                        <option value="yt">YouTube Subscribers</option>
+                        <option value="ig">Instagram Followers</option>
+                        <option value="tt">TikTok Followers</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-subtitle" id="matrix-sub">X = Social followers (latest week) vs Y = 2026 YTD Total Streams (KR+JP) — bubble size proportional to streams</div>
+            <canvas id="chart-matrix" style="max-height:420px;"></canvas>
+        </div>
+    </section>
+
     <section class="table-section">
         <h3>Artist Summary — 2026 YTD Ranking</h3>
         <div id="summary-table"></div>
     </section>
 
     <footer class="footer">
-        Data Source: Luminate / Snowflake MCP | Generated: 2026-04-08 | Prepared for Kreators Network
+        Data Source: Luminate / Snowflake MCP | Generated: 2026-04-14 | Prepared for Kreators Network
     </footer>
 </div>
 
@@ -593,6 +611,27 @@ const TT_DATA = TT_RAW.map(r=>({week:r[0],artist:r[1],followers:+r[2],likes:+r[3
 const TT_WEEKS = [...new Set(TT_DATA.map(d=>d.week))].sort();
 const TT_ARTISTS = [...new Set(TT_DATA.map(d=>d.artist))].sort();
 
+// ============================================================
+// YOUTUBE SUBSCRIBERS — [week, artist, yt_subs]
+// ============================================================
+const YT_RAW = [
+["2025-12-29","AtHeart",1310000],["2025-12-29","Baby DONT Cry",153375],["2025-12-29","HITGS",62000],["2025-12-29","Hearts2Hearts",1410000],["2025-12-29","ILLIT",3385000],["2025-12-29","KiiiKiii",206000],["2025-12-29","MEOVV",1101000],["2025-12-29","RESCENE",291750],["2025-12-29","Say My Name",466750],["2025-12-29","UNIS",816750],["2025-12-29","USPEER",0],["2025-12-29","ifeye",272889],
+["2026-01-05","AtHeart",1310000],["2026-01-05","Baby DONT Cry",154500],["2026-01-05","HITGS",62400],["2026-01-05","Hearts2Hearts",1427500],["2026-01-05","ILLIT",3426667],["2026-01-05","KiiiKiii",264989],["2026-01-05","MEOVV",1108000],["2026-01-05","RESCENE",293400],["2026-01-05","Say My Name",468333],["2026-01-05","UNIS",818167],["2026-01-05","USPEER",0],["2026-01-05","ifeye",273462],
+["2026-01-12","AtHeart",1310000],["2026-01-12","Baby DONT Cry",155714],["2026-01-12","HITGS",62700],["2026-01-12","Hearts2Hearts",1447500],["2026-01-12","ILLIT",3480000],["2026-01-12","KiiiKiii",271758],["2026-01-12","MEOVV",1114167],["2026-01-12","RESCENE",296000],["2026-01-12","Say My Name",470333],["2026-01-12","UNIS",819400],["2026-01-12","USPEER",0],["2026-01-12","ifeye",274000],
+["2026-01-19","AtHeart",1310000],["2026-01-19","Baby DONT Cry",156625],["2026-01-19","HITGS",62920],["2026-01-19","Hearts2Hearts",1460000],["2026-01-19","ILLIT",3525000],["2026-01-19","KiiiKiii",278527],["2026-01-19","MEOVV",1120000],["2026-01-19","RESCENE",299000],["2026-01-19","Say My Name",472000],["2026-01-19","UNIS",821000],["2026-01-19","USPEER",0],["2026-01-19","ifeye",274500],
+["2026-01-26","AtHeart",1310000],["2026-01-26","Baby DONT Cry",157500],["2026-01-26","HITGS",63333],["2026-01-26","Hearts2Hearts",1468750],["2026-01-26","ILLIT",3555000],["2026-01-26","KiiiKiii",285297],["2026-01-26","MEOVV",1123889],["2026-01-26","RESCENE",301500],["2026-01-26","Say My Name",472875],["2026-01-26","UNIS",822000],["2026-01-26","USPEER",0],["2026-01-26","ifeye",275000],
+["2026-02-02","AtHeart",1310000],["2026-02-02","Baby DONT Cry",158300],["2026-02-02","HITGS",63500],["2026-02-02","Hearts2Hearts",1487500],["2026-02-02","ILLIT",3603333],["2026-02-02","KiiiKiii",292066],["2026-02-02","MEOVV",1127778],["2026-02-02","RESCENE",303500],["2026-02-02","Say My Name",474000],["2026-02-02","UNIS",823125],["2026-02-02","USPEER",0],["2026-02-02","ifeye",275636],
+["2026-02-09","AtHeart",1310000],["2026-02-09","Baby DONT Cry",159000],["2026-02-09","HITGS",63700],["2026-02-09","Hearts2Hearts",1510000],["2026-02-09","ILLIT",3635000],["2026-02-09","KiiiKiii",297000],["2026-02-09","MEOVV",1131765],["2026-02-09","RESCENE",304833],["2026-02-09","Say My Name",474467],["2026-02-09","UNIS",824000],["2026-02-09","USPEER",0],["2026-02-09","ifeye",276136],
+["2026-02-16","AtHeart",1310000],["2026-02-16","Baby DONT Cry",159545],["2026-02-16","HITGS",63967],["2026-02-16","Hearts2Hearts",1560000],["2026-02-16","ILLIT",3660000],["2026-02-16","KiiiKiii",297000],["2026-02-16","MEOVV",1135882],["2026-02-16","RESCENE",306222],["2026-02-16","Say My Name",474867],["2026-02-16","UNIS",825000],["2026-02-16","USPEER",0],["2026-02-16","ifeye",276364],
+["2026-02-23","AtHeart",1316000],["2026-02-23","Baby DONT Cry",160500],["2026-02-23","HITGS",64200],["2026-02-23","Hearts2Hearts",1620000],["2026-02-23","ILLIT",3690000],["2026-02-23","KiiiKiii",297000],["2026-02-23","MEOVV",1140000],["2026-02-23","RESCENE",307500],["2026-02-23","Say My Name",475429],["2026-02-23","UNIS",826000],["2026-02-23","USPEER",0],["2026-02-23","ifeye",276773],
+["2026-03-02","AtHeart",1340000],["2026-03-02","Baby DONT Cry",162250],["2026-03-02","HITGS",64450],["2026-03-02","Hearts2Hearts",1730000],["2026-03-02","ILLIT",3715000],["2026-03-02","KiiiKiii",297000],["2026-03-02","MEOVV",1144667],["2026-03-02","RESCENE",308833],["2026-03-02","Say My Name",475929],["2026-03-02","UNIS",827250],["2026-03-02","USPEER",0],["2026-03-02","ifeye",277105],
+["2026-03-09","AtHeart",1370000],["2026-03-09","Baby DONT Cry",166000],["2026-03-09","HITGS",64700],["2026-03-09","Hearts2Hearts",1820000],["2026-03-09","ILLIT",3740000],["2026-03-09","KiiiKiii",297000],["2026-03-09","MEOVV",1149333],["2026-03-09","RESCENE",309750],["2026-03-09","Say My Name",476462],["2026-03-09","UNIS",828143],["2026-03-09","USPEER",0],["2026-03-09","ifeye",277474],
+["2026-03-16","AtHeart",1420000],["2026-03-16","Baby DONT Cry",169000],["2026-03-16","HITGS",65100],["2026-03-16","Hearts2Hearts",1920000],["2026-03-16","ILLIT",3780000],["2026-03-16","KiiiKiii",297000],["2026-03-16","MEOVV",1154000],["2026-03-16","RESCENE",310556],["2026-03-16","Say My Name",477000],["2026-03-16","UNIS",829143],["2026-03-16","USPEER",0],["2026-03-16","ifeye",277842],
+["2026-03-23","AtHeart",1480000],["2026-03-23","Baby DONT Cry",336000],["2026-03-23","HITGS",65267],["2026-03-23","Hearts2Hearts",1980000],["2026-03-23","ILLIT",3805000],["2026-03-23","KiiiKiii",297000],["2026-03-23","MEOVV",1158667],["2026-03-23","RESCENE",312000],["2026-03-23","Say My Name",477700],["2026-03-23","UNIS",830500],["2026-03-23","USPEER",0],["2026-03-23","ifeye",278364],
+["2026-03-30","AtHeart",1500000],["2026-03-30","Baby DONT Cry",549000],["2026-03-30","HITGS",65400],["2026-03-30","Hearts2Hearts",2120000],["2026-03-30","ILLIT",3840000],["2026-03-30","KiiiKiii",297000],["2026-03-30","MEOVV",1160000],["2026-03-30","RESCENE",314000],["2026-03-30","Say My Name",478000],["2026-03-30","UNIS",832000],["2026-03-30","USPEER",0],["2026-03-30","ifeye",279000]
+];
+const YT_DATA = YT_RAW.map(r=>({week:r[0],artist:r[1],subs:+r[2]}));
+
 // Tableau 10 palette
 const COLORS = {
     'AtHeart':'#e15759','Hearts2Hearts':'#4e79a7','KiiiKiii':'#f28e2b',
@@ -661,7 +700,7 @@ class Dashboard {
 
     validWeeks() { return WEEKS.filter(w => DATA.some(d => d.week===w && d.total>0)); }
 
-    init() { this.renderKPIs(); this.renderTrends(); this.renderCumulative(); this.renderRatio(); this.renderGrowth(); this.renderIG(); this.renderTTFollowers(); this.renderTTLikes(); this.renderTable(); }
+    init() { this.renderKPIs(); this.renderTrends(); this.renderCumulative(); this.renderRatio(); this.renderGrowth(); this.renderIG(); this.renderTTFollowers(); this.renderTTLikes(); this.renderMatrix(); this.renderTable(); }
 
     applyFilters() {
         Object.values(this.charts).forEach(c=>c.destroy());
@@ -908,6 +947,106 @@ class Dashboard {
                 scales: {
                     x: { grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 } }, border: { color: '#d4d4d4' } },
                     y: { beginAtZero: false, grid: { color: '#ececec' }, ticks: { color: '#767676', font: { size: 10 }, callback: v => fmt(v) }, border: { color: '#d4d4d4' } }
+                }
+            }
+        });
+    }
+
+    socialPlatform() { return document.getElementById('filter-social-platform').value; }
+
+    renderMatrix() {
+        const m = this.mk(), mkt = this.mf();
+        const platform = this.socialPlatform();
+        const vis = this.vis().filter(a => a !== 'USPEER');
+        const platLabel = {yt:'YouTube Subscribers', ig:'Instagram Followers', tt:'TikTok Followers'}[platform];
+
+        // Get latest week social values
+        const lastW = WEEKS[WEEKS.length - 1];
+        const socialLookup = {};
+        if (platform === 'yt') {
+            YT_DATA.forEach(d => { if (d.week === lastW) socialLookup[d.artist] = d.subs; });
+        } else if (platform === 'ig') {
+            IG_DATA.forEach(d => { if (d.week === IG_WEEKS[IG_WEEKS.length-1]) socialLookup[d.artist] = d.followers; });
+        } else {
+            TT_DATA.forEach(d => { if (d.week === TT_WEEKS[TT_WEEKS.length-1]) socialLookup[d.artist] = d.followers; });
+        }
+
+        // Get cumulative streams per artist (respecting market + metric filters)
+        const streamTotals = {};
+        DATA.forEach(d => {
+            if (d.total === 0) return;
+            if (mkt !== 'all' && d.location !== mkt) return;
+            streamTotals[d.artist] = (streamTotals[d.artist] || 0) + d[m];
+        });
+
+        // Build scatter datasets with fixed-size dots
+        const datasets = vis.map(art => {
+            const social = socialLookup[art] || 0;
+            const streams = streamTotals[art] || 0;
+            if (social === 0 && streams === 0) return null;
+            const isA = art === 'AtHeart';
+            return {
+                label: art,
+                data: [{ x: social, y: streams }],
+                backgroundColor: COLORS[art] + '88',
+                borderColor: COLORS[art],
+                borderWidth: isA ? 3 : 1.5,
+                pointRadius: isA ? 10 : 7,
+                pointHoverRadius: 12,
+                pointStyle: 'circle'
+            };
+        }).filter(Boolean);
+
+        document.getElementById('matrix-title').textContent = `Social vs Streaming Matrix — ${platLabel}`;
+        document.getElementById('matrix-sub').textContent = `X = ${platLabel} (latest week) vs Y = 2026 YTD ${this.metricLabel()} Streams (${this.mktLabel()})`;
+
+        this.charts['chart-matrix'] = new Chart(document.getElementById('chart-matrix'), {
+            type: 'scatter',
+            data: { datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                layout: { padding: 20 },
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 12, color: '#555', font: { size: 11 } } },
+                    tooltip: {
+                        backgroundColor: '#fff', titleColor: '#333', bodyColor: '#555', borderColor: '#d4d4d4', borderWidth: 1, cornerRadius: 3, padding: 10,
+                        callbacks: {
+                            label: ctx => {
+                                const d = ctx.raw;
+                                return `${ctx.dataset.label}: ${platLabel} ${fmt(d.x)} | Streams ${fmt(d.y)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'logarithmic',
+                        title: { display: true, text: platLabel, color: '#555', font: { size: 11, weight: '600' } },
+                        grid: { color: '#ececec' }, border: { color: '#d4d4d4' },
+                        ticks: { color: '#767676', font: { size: 10 }, autoSkip: false,
+                            callback: function(v) {
+                                const log = Math.log10(v);
+                                if (Math.abs(log - Math.round(log)) < 0.001) return fmt(v);
+                                const m = v / Math.pow(10, Math.floor(log));
+                                if (Math.abs(m - 3) < 0.01) return fmt(v);
+                                return null;
+                            }
+                        }
+                    },
+                    y: {
+                        type: 'logarithmic',
+                        title: { display: true, text: `${this.metricLabel()} Streams — ${this.mktLabel()} (2026 YTD)`, color: '#555', font: { size: 11, weight: '600' } },
+                        grid: { color: '#ececec' }, border: { color: '#d4d4d4' },
+                        ticks: { color: '#767676', font: { size: 10 }, autoSkip: false,
+                            callback: function(v) {
+                                const log = Math.log10(v);
+                                if (Math.abs(log - Math.round(log)) < 0.001) return fmt(v);
+                                const m = v / Math.pow(10, Math.floor(log));
+                                if (Math.abs(m - 3) < 0.01) return fmt(v);
+                                return null;
+                            }
+                        }
+                    }
                 }
             }
         });
