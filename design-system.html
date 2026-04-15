@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KREATORS — Design System v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet" />
+<style>
+  /* ---------- TOKENS ---------- */
+  :root{
+    /* Color */
+    --bg: #FFFFFF;
+    --ink: #0A0A0A;
+    --ink-2: #1A1A1A;
+    --muted: #6B6B6B;
+    --rule: #E5E5E5;
+    --rule-strong: #0A0A0A;
+    --hypeer: #EF4A24;          /* HYPEER orange — only inside HYPEER contexts */
+    --hypeer-tint: #FCDED8;
+
+    /* Type */
+    --font-sans: "Inter", "Pretendard Variable", system-ui, sans-serif;
+    --font-serif: "Newsreader", "Pretendard Variable", Georgia, serif;
+    --font-kr: "Pretendard Variable", "Inter", system-ui, sans-serif;
+
+    /* Scale (editorial rhythm) */
+    --fs-display-xl: clamp(56px, 9vw, 120px);
+    --fs-display-l:  clamp(44px, 6.4vw, 84px);
+    --fs-display-m:  clamp(36px, 4.4vw, 60px);
+    --fs-h1: clamp(32px, 3.4vw, 48px);
+    --fs-h2: clamp(24px, 2.4vw, 34px);
+    --fs-h3: 22px;
+    --fs-lead: 20px;
+    --fs-body: 18px;
+    --fs-ui: 15px;
+    --fs-label: 12px;
+
+    /* Space (8px base) */
+    --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+    --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+    --s-9: 96px; --s-10: 128px;
+
+    /* Layout */
+    --container: 1440px;
+    --gutter: 24px;
+    --pad-x: clamp(20px, 4vw, 56px);
+  }
+
+  *{ box-sizing: border-box; }
+  html, body{ margin:0; padding:0; background:var(--bg); color:var(--ink); }
+  body{
+    font-family: var(--font-sans);
+    font-size: var(--fs-ui);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a{ color:inherit; text-decoration: none; }
+  a.link{ border-bottom: 1px solid var(--ink); padding-bottom: 1px; }
+  a.link:hover{ color:var(--hypeer); border-color: var(--hypeer); }
+
+  /* ---------- CONTAINER ---------- */
+  .container{ max-width: var(--container); margin: 0 auto; padding: 0 var(--pad-x); }
+
+  /* ---------- TYPOGRAPHY CLASSES ---------- */
+  .display-xl{ font-family: var(--font-sans); font-weight: 900; font-size: var(--fs-display-xl); line-height: 0.95; letter-spacing: -0.035em; }
+  .display-l{  font-family: var(--font-sans); font-weight: 900; font-size: var(--fs-display-l);  line-height: 1.0;  letter-spacing: -0.03em;  }
+  .display-m{  font-family: var(--font-sans); font-weight: 800; font-size: var(--fs-display-m);  line-height: 1.05; letter-spacing: -0.025em; }
+  .h1{ font-family: var(--font-sans); font-weight: 800; font-size: var(--fs-h1); line-height: 1.1; letter-spacing: -0.02em; }
+  .h2{ font-family: var(--font-sans); font-weight: 800; font-size: var(--fs-h2); line-height: 1.15; letter-spacing: -0.015em; }
+  .h3{ font-family: var(--font-sans); font-weight: 700; font-size: var(--fs-h3); line-height: 1.25; letter-spacing: -0.01em; }
+  .lead{ font-family: var(--font-serif); font-weight: 400; font-size: var(--fs-lead); line-height: 1.55; }
+  .body{ font-family: var(--font-serif); font-weight: 400; font-size: var(--fs-body); line-height: 1.7; color: var(--ink-2); }
+  .ui{ font-family: var(--font-sans); font-weight: 500; font-size: var(--fs-ui); line-height: 1.4; }
+  .label{
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--fs-label);
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .nav-inner{
+    display: flex; align-items: center; justify-content: space-between;
+    height: 72px;
+  }
+  .nav-brand{
+    font-family: var(--font-sans); font-weight: 900;
+    font-size: 20px; letter-spacing: -0.02em;
+  }
+  .nav-brand .dot{ display:inline-block; }
+  .nav-menu{ display: flex; gap: var(--s-6); }
+  .nav-menu a{
+    font-family: var(--font-sans); font-weight: 500; font-size: 15px;
+    color: var(--ink);
+  }
+  .nav-menu a:hover{ color: var(--hypeer); }
+  .nav-cta{
+    font-family: var(--font-sans); font-weight: 600; font-size: 14px;
+    padding: 10px 18px; border: 1px solid var(--ink); border-radius: 0;
+  }
+  .nav-cta:hover{ background: var(--ink); color: var(--bg); }
+
+  /* ---------- FOOTER ---------- */
+  .footer{
+    margin-top: var(--s-10);
+    background: var(--ink);
+    color: var(--bg);
+    padding: var(--s-9) 0 var(--s-6);
+  }
+  .footer-grid{
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: var(--s-7);
+  }
+  .footer h4{
+    font-family: var(--font-sans); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: #9A9A9A;
+    margin: 0 0 var(--s-4);
+  }
+  .footer ul{ list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .footer ul a{ font-size: 15px; color: var(--bg); }
+  .footer ul a:hover{ color: var(--hypeer); }
+  .footer-brand{
+    font-family: var(--font-sans); font-weight: 900; font-size: 40px;
+    letter-spacing: -0.03em; margin: 0 0 var(--s-3);
+  }
+  .footer-bottom{
+    margin-top: var(--s-8);
+    padding-top: var(--s-4);
+    border-top: 1px solid #2A2A2A;
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: #6B6B6B;
+  }
+  @media (max-width: 800px){
+    .footer-grid{ grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--font-sans); font-weight: 600; font-size: 15px;
+    padding: 14px 22px;
+    border: 1px solid var(--ink);
+    background: var(--bg); color: var(--ink);
+    cursor: pointer; transition: all .15s ease;
+  }
+  .btn:hover{ background: var(--ink); color: var(--bg); }
+  .btn.btn-dark{ background: var(--ink); color: var(--bg); }
+  .btn.btn-dark:hover{ background: transparent; color: var(--ink); }
+  .btn.btn-hypeer{ background: var(--hypeer); color: var(--ink); border-color: var(--hypeer); }
+  .btn.btn-hypeer:hover{ background: var(--ink); color: var(--hypeer); border-color: var(--ink); }
+  .btn .arrow{ display: inline-block; transform: translateX(0); transition: transform .15s ease; }
+  .btn:hover .arrow{ transform: translateX(4px); }
+
+  /* ---------- TAGS ---------- */
+  .tag{
+    display: inline-block;
+    font-family: var(--font-sans); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--ink);
+    color: var(--ink); background: transparent;
+  }
+  .tag.tag-solid{ background: var(--ink); color: var(--bg); }
+  .tag.tag-hypeer{ border-color: var(--hypeer); color: var(--hypeer); }
+  .tag.tag-hypeer-solid{ background: var(--hypeer); color: var(--ink); border-color: var(--hypeer); }
+
+  /* ---------- CARDS ---------- */
+  .card{
+    display: block;
+    border-top: 1px solid var(--ink);
+    padding-top: var(--s-4);
+    transition: opacity .15s ease;
+  }
+  .card:hover{ opacity: 0.75; }
+  .card-meta{ display: flex; gap: var(--s-3); align-items: center; margin-bottom: var(--s-3); }
+  .card-meta .label{ color: var(--muted); }
+  .card-thumb{
+    aspect-ratio: 4 / 3;
+    background: #F1F1F1;
+    margin-bottom: var(--s-4);
+    overflow: hidden;
+    position: relative;
+  }
+  .card-thumb.dark{ background: var(--ink); }
+  .card-thumb.hypeer{ background: var(--hypeer); }
+  .card-title{
+    font-family: var(--font-sans); font-weight: 800;
+    font-size: 22px; line-height: 1.2; letter-spacing: -0.01em;
+    margin: 0 0 var(--s-2);
+  }
+  .card-desc{
+    font-family: var(--font-serif); font-size: 16px; line-height: 1.55;
+    color: var(--ink-2); margin: 0;
+  }
+
+  /* ---------- SECTION ---------- */
+  .section{ padding: var(--s-9) 0; border-top: 1px solid var(--rule); }
+  .section-first{ padding-top: var(--s-8); border-top: none; }
+  .section-header{
+    display: grid; grid-template-columns: 1fr 2fr; gap: var(--s-6);
+    margin-bottom: var(--s-7);
+  }
+  .section-header .label{ color: var(--muted); }
+  @media (max-width: 800px){
+    .section-header{ grid-template-columns: 1fr; gap: var(--s-3); }
+  }
+
+  /* ---------- SPECIMEN LAYOUT ---------- */
+  .spec{
+    display: grid; grid-template-columns: 200px 1fr; gap: var(--s-6);
+    padding: var(--s-5) 0;
+    border-top: 1px solid var(--rule);
+  }
+  .spec:first-of-type{ border-top: 1px solid var(--ink); }
+  .spec-label{ color: var(--muted); font-family: var(--font-sans); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .spec-value{ min-width: 0; }
+  @media (max-width: 700px){
+    .spec{ grid-template-columns: 1fr; gap: var(--s-2); }
+  }
+
+  /* ---------- COLOR SWATCHES ---------- */
+  .swatches{ display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--s-4); }
+  .swatch{ border: 1px solid var(--rule); }
+  .swatch-chip{ aspect-ratio: 3/2; }
+  .swatch-info{ padding: var(--s-3) var(--s-4); display: flex; justify-content: space-between; font-size: 13px; }
+  .swatch-info .hex{ color: var(--muted); font-family: var(--font-sans); }
+
+  /* ---------- UTILITIES ---------- */
+  .stack-4 > * + *{ margin-top: var(--s-4); }
+  .stack-3 > * + *{ margin-top: var(--s-3); }
+  .stack-6 > * + *{ margin-top: var(--s-6); }
+  .row{ display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: center; }
+  .grid-3{ display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-6); }
+  @media (max-width: 900px){ .grid-3{ grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px){ .grid-3{ grid-template-columns: 1fr; } }
+
+  /* ---------- HYPEER ISLAND ---------- */
+  .hypeer-island{
+    background: var(--hypeer);
+    color: var(--ink);
+    padding: var(--s-8) var(--pad-x);
+    margin: 0 calc(-1 * var(--pad-x));
+  }
+  .hypeer-island .label{ color: var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="nav-brand">KREATORS<span class="dot">.</span></a>
+    <div class="nav-menu">
+      <a href="#">Work</a>
+      <a href="#">Studio</a>
+      <a href="#">Journal</a>
+      <a href="#">Careers</a>
+    </div>
+    <a href="#" class="nav-cta">Contact</a>
+  </div>
+</nav>
+
+<main class="container">
+
+  <!-- HERO -->
+  <section class="section section-first">
+    <div class="label">Design System — v1 · 2026.04.15</div>
+    <h1 class="display-l" style="margin: var(--s-4) 0 var(--s-5);">
+      One system.<br/>Four pages.<br/>Consistent by design.
+    </h1>
+    <p class="lead" style="max-width: 760px;">
+      This page is the single source of truth for every token, component, and typographic decision that the Main, Portfolio, Hiring, and Blog pages will share. Nothing ships to the live site unless it can be expressed in the vocabulary below.
+    </p>
+  </section>
+
+  <!-- COLOR -->
+  <section class="section">
+    <div class="section-header">
+      <div class="label">01 / Color</div>
+      <div>
+        <h2 class="h2" style="margin:0 0 var(--s-3);">Black on white, with one accent reserved for HYPEER.</h2>
+        <p class="body" style="max-width: 720px; margin:0;">
+          The master brand lives in pure black and white. Orange #EF4A24 appears only inside HYPEER-branded sections or pages, so that the color itself becomes a wayfinding signal.
+        </p>
+      </div>
+    </div>
+
+    <div class="swatches">
+      <div class="swatch"><div class="swatch-chip" style="background:#FFFFFF; border-bottom:1px solid var(--rule);"></div><div class="swatch-info"><span>BG / Paper</span><span class="hex">#FFFFFF</span></div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#0A0A0A;"></div><div class="swatch-info"><span>Ink</span><span class="hex">#0A0A0A</span></div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#6B6B6B;"></div><div class="swatch-info"><span>Muted</span><span class="hex">#6B6B6B</span></div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#E5E5E5;"></div><div class="swatch-info"><span>Rule</span><span class="hex">#E5E5E5</span></div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#EF4A24;"></div><div class="swatch-info"><span>HYPEER Orange</span><span class="hex">#EF4A24</span></div></div>
+      <div class="swatch"><div class="swatch-chip" style="background:#FCDED8;"></div><div class="swatch-info"><span>HYPEER Tint</span><span class="hex">#FCDED8</span></div></div>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section class="section">
+    <div class="section-header">
+      <div class="label">02 / Typography</div>
+      <div>
+        <h2 class="h2" style="margin:0 0 var(--s-3);">Bold sans for voice, serif for reading.</h2>
+        <p class="body" style="max-width: 720px; margin:0;">
+          Inter (900) handles every headline so the brand echoes the KREATORS. wordmark. Newsreader carries long-form body copy, giving research-grade content the weight and rhythm of an editorial magazine. Pretendard covers Korean across the full system.
+        </p>
+      </div>
+    </div>
+
+    <div class="spec"><div class="spec-label">Display XL / Inter 900</div><div class="spec-value"><div class="display-xl">KREATORS.</div></div></div>
+    <div class="spec"><div class="spec-label">Display L / Inter 900</div><div class="spec-value"><div class="display-l">엔터테인먼트를 데이터로.</div></div></div>
+    <div class="spec"><div class="spec-label">Display M / Inter 800</div><div class="spec-value"><div class="display-m">Research-led marketing for music, film, and IP.</div></div></div>
+    <div class="spec"><div class="spec-label">H1 / Inter 800</div><div class="spec-value"><div class="h1">아티스트는 데이터로 움직이지 않지만, 팬덤은 움직입니다.</div></div></div>
+    <div class="spec"><div class="spec-label">H2 / Inter 800</div><div class="spec-value"><div class="h2">Portfolio — selected work, 2023 — 2026</div></div></div>
+    <div class="spec"><div class="spec-label">H3 / Inter 700</div><div class="spec-value"><div class="h3">Why the orange only appears here</div></div></div>
+    <div class="spec"><div class="spec-label">Lead / Newsreader 400</div><div class="spec-value"><p class="lead" style="margin:0; max-width:760px;">The opening paragraph of every long-form article uses Newsreader at 20px — a little larger than body, italic-capable, and calibrated for comfortable reading at desktop and mobile alike.</p></div></div>
+    <div class="spec"><div class="spec-label">Body / Newsreader 400</div><div class="spec-value"><p class="body" style="margin:0; max-width:760px;">본문은 Newsreader 18px, 1.7 라인 하이트로 설정되어 있습니다. 아티클 내부에서 이 서체는 리서치 보고서가 아니라 잘 편집된 잡지처럼 읽히게 합니다. 한글은 Pretendard가 매끄럽게 이어 받습니다.</p></div></div>
+    <div class="spec"><div class="spec-label">UI / Inter 500</div><div class="spec-value"><p class="ui" style="margin:0;">Navigation, buttons, tags, and captions.</p></div></div>
+    <div class="spec"><div class="spec-label">Label / Inter 600 uppercase</div><div class="spec-value"><span class="label">03 — Components</span></div></div>
+  </section>
+
+  <!-- BUTTONS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="label">03 / Buttons</div>
+      <div>
+        <h2 class="h2" style="margin:0 0 var(--s-3);">Three button types. No more.</h2>
+        <p class="body" style="max-width: 720px; margin:0;">
+          Default (outline on white), Dark (filled black), and HYPEER (filled orange — used only inside HYPEER contexts). A right-pointing arrow appears on every primary call-to-action to reinforce forward motion.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <a href="#" class="btn">View Work <span class="arrow">→</span></a>
+      <a href="#" class="btn btn-dark">Read Journal <span class="arrow">→</span></a>
+      <a href="#" class="btn btn-hypeer">Meet HYPEER <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- TAGS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="label">04 / Tags</div>
+      <div>
+        <h2 class="h2" style="margin:0 0 var(--s-3);">Tags classify — they don't decorate.</h2>
+        <p class="body" style="max-width: 720px; margin:0;">
+          Four variants in total. Outline (default), Solid (strong emphasis, rare), HYPEER Outline (for HYPEER-associated projects on the master site), HYPEER Solid (only inside HYPEER pages).
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <span class="tag">Research</span>
+      <span class="tag">Campaign</span>
+      <span class="tag tag-solid">Featured</span>
+      <span class="tag tag-hypeer">HYPEER</span>
+      <span class="tag tag-hypeer-solid">HYPEER Pick</span>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="label">05 / Cards</div>
+      <div>
+        <h2 class="h2" style="margin:0 0 var(--s-3);">Every list on the site uses this card.</h2>
+        <p class="body" style="max-width: 720px; margin:0;">
+          Portfolio grids, Blog archive, Main page highlights — all built on the same card component. Consistency lives here, not in per-page styling.
+        </p>
+      </div>
+    </div>
+    <div class="grid-3">
+      <a href="#" class="card">
+        <div class="card-meta"><span class="label">Research</span><span class="label">2026</span></div>
+        <div class="card-thumb dark"></div>
+        <h3 class="card-title">How K-pop fandoms migrate across platforms: a two-year data study</h3>
+        <p class="card-desc">A longitudinal look at where listening, sharing, and purchasing behavior actually lives in 2026.</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-meta"><span class="label">Campaign</span><span class="label">2025</span></div>
+        <div class="card-thumb"></div>
+        <h3 class="card-title">From streaming signals to brand partnership: Case X global rollout</h3>
+        <p class="card-desc">Turning real-time platform data into a coordinated 14-market launch playbook.</p>
+      </a>
+      <a href="#" class="card">
+        <div class="card-meta"><span class="label tag-hypeer" style="border:none;padding:0;color:var(--hypeer)">HYPEER</span><span class="label">2025</span></div>
+        <div class="card-thumb hypeer"></div>
+        <h3 class="card-title">HYPEER — building the social-first wing of Kreators Network</h3>
+        <p class="card-desc">Our in-house marketing agency line, and how it changes the kind of work we can take on.</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- SECTION HEADER PATTERN -->
+  <section class="section">
+    <div class="section-header">
+      <div class="label">06 / Section header</div>
+      <div>
+        <h2 class="h2" style="margin:0 0 var(--s-3);">Left rail label, right rail heading + lede.</h2>
+        <p class="body" style="max-width: 720px; margin:0;">
+          Every major section on every page opens with this exact structure. It is the spine that makes the Main page and the Blog page feel like the same publication.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HYPEER ISLAND DEMO -->
+  <section class="section" style="border-top: 1px solid var(--ink);">
+    <div class="section-header">
+      <div class="label">07 / HYPEER island</div>
+      <div>
+        <h2 class="h2" style="margin:0 0 var(--s-3);">The only place orange lives on the master site.</h2>
+        <p class="body" style="max-width: 720px; margin:0;">
+          When the master pages need to introduce HYPEER, the content sits inside a full-bleed orange block — a visible handoff between the parent brand and the sub-brand.
+        </p>
+      </div>
+    </div>
+    <div class="hypeer-island">
+      <div class="label">Introducing</div>
+      <h2 class="display-m" style="margin: var(--s-3) 0 var(--s-4); max-width: 900px;">HYPEER — the social-first marketing wing of Kreators Network.</h2>
+      <p class="lead" style="max-width: 720px; margin: 0 0 var(--s-5);">Where KREATORS researches, HYPEER activates. From creator partnerships to always-on social, HYPEER turns our data into campaigns that move.</p>
+      <a href="#" class="btn" style="background: var(--ink); color: var(--hypeer); border-color: var(--ink);">See HYPEER work <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- SPACING -->
+  <section class="section">
+    <div class="section-header">
+      <div class="label">08 / Spacing & grid</div>
+      <div>
+        <h2 class="h2" style="margin:0 0 var(--s-3);">8px base, 12 columns, 1440 max.</h2>
+        <p class="body" style="max-width: 720px; margin:0;">
+          Section padding is 96px top/bottom on desktop. Horizontal page padding scales from 20px (mobile) to 56px (large desktop). The grid uses 12 columns with 24px gutters — never fewer.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div style="width:4px;height:48px;background:var(--ink);"></div>
+      <div style="width:8px;height:48px;background:var(--ink);"></div>
+      <div style="width:12px;height:48px;background:var(--ink);"></div>
+      <div style="width:16px;height:48px;background:var(--ink);"></div>
+      <div style="width:24px;height:48px;background:var(--ink);"></div>
+      <div style="width:32px;height:48px;background:var(--ink);"></div>
+      <div style="width:48px;height:48px;background:var(--ink);"></div>
+      <div style="width:64px;height:48px;background:var(--ink);"></div>
+      <div style="width:96px;height:48px;background:var(--ink);"></div>
+      <div style="width:128px;height:48px;background:var(--ink);"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">KREATORS<span style="color:var(--hypeer)">.</span></div>
+        <p class="ui" style="color:#9A9A9A; max-width: 360px;">
+          An entertainment-focused data marketing agency based in Seoul. We read industries and write what we learn.
+        </p>
+      </div>
+      <div>
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">HYPEER</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Work</h4>
+        <ul>
+          <li><a href="#">Portfolio</a></li>
+          <li><a href="#">Journal</a></li>
+          <li><a href="#">Reports</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Medium</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Kreators Network</span>
+      <span>Seoul · Remote</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
