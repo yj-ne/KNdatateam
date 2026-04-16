@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-pop Boy Group Competitive Analysis — 2025+ Male Idol Groups</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+    <style>
+:root {
+    --bg-primary: #f3f3f3;
+    --bg-card: #ffffff;
+    --bg-header: #ffffff;
+    --text-primary: #333333;
+    --text-secondary: #767676;
+    --text-on-dark: #333333;
+    --accent-main: #1b9e77;
+    --accent-main-glow: rgba(27, 158, 119, 0.12);
+    --positive: #59a14f;
+    --negative: #e15759;
+    --tableau-blue: #4e79a7;
+    --gap: 14px;
+    --radius: 4px;
+    --border: 1px solid #e0e0e0;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+.dashboard-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 20px var(--gap);
+}
+
+.dashboard-header {
+    background: var(--bg-header);
+    padding: 20px 24px;
+    border-radius: var(--radius);
+    margin-bottom: var(--gap);
+    border: var(--border);
+    box-shadow: var(--shadow);
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
+.header-top h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+}
+
+.header-top h1 span {
+    color: var(--accent-main);
+    font-weight: 700;
+}
+
+.header-sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+    border-bottom: 3px solid var(--tableau-blue);
+    padding-bottom: 10px;
+}
+
+.filters {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.filter-group label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 600;
+}
+
+.filter-group select {
+    padding: 6px 10px;
+    border: 1px solid #c8c8c8;
+    border-radius: 3px;
+    background: #fff;
+    color: var(--text-primary);
+    font-size: 12px;
+    cursor: pointer;
+    outline: none;
+}
+
+.filter-group select:focus {
+    border-color: var(--tableau-blue);
+    box-shadow: 0 0 0 2px rgba(78,121,167,0.15);
+}
+
+.artist-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.artist-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid #d4d4d4;
+    background: #fafafa;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    user-select: none;
+    font-weight: 500;
+}
+
+.artist-chip.active {
+    background: #fff;
+    color: var(--text-primary);
+    border-color: #999;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.artist-chip .chip-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+/* reserved */
+
+.chip-controls {
+    display: flex;
+    gap: 4px;
+    margin-right: 10px;
+}
+
+.chip-controls button {
+    padding: 4px 8px;
+    border-radius: 3px;
+    border: 1px solid #c8c8c8;
+    background: #fff;
+    color: var(--text-secondary);
+    font-size: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.chip-controls button:hover {
+    background: #f0f0f0;
+    color: var(--text-primary);
+    border-color: #999;
+}
+
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--gap);
+    margin-bottom: var(--gap);
+}
+
+.kpi-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border: var(--border);
+    box-shadow: var(--shadow);
+}
+
+.kpi-card.highlight {
+    border-left: 4px solid var(--accent-main);
+}
+
+.kpi-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.kpi-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    letter-spacing: -0.5px;
+}
+
+.kpi-card.highlight .kpi-value {
+    color: var(--accent-main);
+}
+
+.kpi-change {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.kpi-change.positive {
+    color: var(--positive);
+}
+
+.kpi-change.negative {
+    color: var(--negative);
+}
+
+.chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap);
+    margin-bottom: var(--gap);
+}
+
+.chart-row.full {
+    grid-template-columns: 1fr;
+}
+
+.chart-container {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border: var(--border);
+    box-shadow: var(--shadow);
+}
+
+.chart-container h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.chart-subtitle {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+}
+
+.chart-container canvas {
+    max-height: 340px;
+}
+
+.table-section {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border: var(--border);
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+    margin-bottom: var(--gap);
+}
+
+.table-section h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.data-table thead th {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 2px solid #333;
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+}
+
+.data-table thead th:hover {
+    background: #f5f5f5;
+}
+
+.data-table tbody td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ececec;
+}
+
+.data-table tbody tr:hover {
+    background: #f8f8f8;
+}
+
+/* reserved */
+
+.artist-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.artist-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    background: #f0f0f0;
+    color: var(--text-secondary);
+}
+
+.rank-badge.top3 {
+    background: var(--accent-main);
+    color: #fff;
+}
+
+.footer {
+    text-align: center;
+    padding: 14px;
+    font-size: 10px;
+    color: var(--text-secondary);
+    letter-spacing: 0.3px;
+}
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div class="header-top">
+            <h1>K-pop Boy Group Competitive Analysis — <span>2025+ Debuts</span></h1>
+        </div>
+        <div class="header-sub">2025+ Debut Male Artists | Weekly Streaming Trends in South Korea & Japan | 2026 Timeframe</div>
+        <div class="filters">
+            <div class="filter-group">
+                <label>Market</label>
+                <select id="filter-market" onchange="dashboard.applyFilters()">
+                    <option value="all">KR + JP Combined</option>
+                    <option value="KR">South Korea</option>
+                    <option value="JP">Japan</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Metric</label>
+                <select id="filter-metric" onchange="dashboard.applyFilters()">
+                    <option value="total">Total Streams</option>
+                    <option value="premium">Premium Streams</option>
+                    <option value="ad">Ad-Supported Streams</option>
+                </select>
+            </div>
+            <div class="filter-group" style="flex-basis:100%;">
+                <label>Artists</label>
+                <div class="artist-checkboxes" id="artist-chips"></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="kpi-row" id="kpi-row"></section>
+
+    <section class="chart-row">
+        <div class="chart-container">
+            <h3 id="trend-kr-title">Weekly Streaming Trend — South Korea</h3>
+            <div class="chart-subtitle" id="trend-kr-sub">Streams per week by artist</div>
+            <canvas id="chart-kr"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3 id="trend-jp-title">Weekly Streaming Trend — Japan</h3>
+            <div class="chart-subtitle" id="trend-jp-sub">Streams per week by artist</div>
+            <canvas id="chart-jp"></canvas>
+        </div>
+    </section>
+
+    <section class="chart-row" id="cumul-ratio-section">
+        <div class="chart-container">
+            <h3 id="cumul-title">Cumulative Streams — 2026 YTD</h3>
+            <div class="chart-subtitle" id="cumul-sub">Total accumulated streams by artist and market</div>
+            <canvas id="chart-cumulative"></canvas>
+        </div>
+        <div class="chart-container" id="ratio-container">
+            <h3>Japan / Korea Streaming Ratio</h3>
+            <div class="chart-subtitle">JP streams as % of total (KR+JP). Higher = stronger Japan presence</div>
+            <canvas id="chart-ratio"></canvas>
+        </div>
+    </section>
+
+    <section class="chart-row full">
+        <div class="chart-container">
+            <h3 id="growth-title">Week-over-Week Growth Rate</h3>
+            <div class="chart-subtitle" id="growth-sub">% change in streams vs previous week</div>
+            <canvas id="chart-growth"></canvas>
+        </div>
+    </section>
+
+    <section class="chart-row full">
+        <div class="chart-container">
+            <h3>Instagram Followers — Cumulative</h3>
+            <div class="chart-subtitle">Total follower count per week</div>
+            <canvas id="chart-ig"></canvas>
+        </div>
+    </section>
+
+    <section class="chart-row">
+        <div class="chart-container">
+            <h3>TikTok Followers — Cumulative</h3>
+            <div class="chart-subtitle">Total TikTok follower count per week</div>
+            <canvas id="chart-tiktok-followers"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3>TikTok Likes — Cumulative</h3>
+            <div class="chart-subtitle">Total TikTok likes per week</div>
+            <canvas id="chart-tiktok-likes"></canvas>
+        </div>
+    </section>
+
+    <section class="chart-row full">
+        <div class="chart-container">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:2px;">
+                <h3 id="matrix-title">Social vs Streaming Matrix</h3>
+                <div class="filter-group" style="flex-direction:row;align-items:center;gap:6px;">
+                    <label style="margin:0;">Platform</label>
+                    <select id="filter-social-platform" onchange="dashboard.applyFilters()">
+                        <option value="yt">YouTube Subscribers</option>
+                        <option value="ig">Instagram Followers</option>
+                        <option value="tt">TikTok Followers</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-subtitle" id="matrix-sub">X = Social followers (latest week) vs Y = 2026 YTD Total Streams (KR+JP)</div>
+            <canvas id="chart-matrix" style="max-height:420px;"></canvas>
+        </div>
+    </section>
+
+    <section class="table-section">
+        <h3>Artist Summary — 2026 YTD Ranking</h3>
+        <div id="summary-table"></div>
+    </section>
+
+    <footer class="footer">
+        Data Source: Luminate / Snowflake MCP | Generated: 2026-04-16 | Prepared for Pinnacle Entertainment
+    </footer>
+</div>
+
+<script>
+const COLORS = {
+    'KickFlip':'#e15759',
+    'IDID':'#4e79a7',
+    'CLOSE YOUR EYES':'#f28e2b',
+    'AHOF':'#76b7b2',
+    'idntt':'#59a14f'
+};
+const ALL_ARTISTS = ['KickFlip','IDID','CLOSE YOUR EYES','AHOF','idntt'];
+
+const STREAMING_DATA = [
+    [87446,64792,22654,"2025-12-29","JP","AHOF"],
+    [93956,86815,7141,"2025-12-29","KR","AHOF"],
+    [104157,77042,27115,"2026-01-05","JP","AHOF"],
+    [73439,65993,7446,"2026-01-05","KR","AHOF"],
+    [107188,76237,30951,"2026-01-12","JP","AHOF"],
+    [60737,53863,6874,"2026-01-12","KR","AHOF"],
+    [116996,88456,28540,"2026-01-19","JP","AHOF"],
+    [54467,49434,5033,"2026-01-19","KR","AHOF"],
+    [111512,82103,29409,"2026-01-26","JP","AHOF"],
+    [55917,50438,5479,"2026-01-26","KR","AHOF"],
+    [93329,70506,22823,"2026-02-02","JP","AHOF"],
+    [52604,48115,4489,"2026-02-02","KR","AHOF"],
+    [86887,66456,20431,"2026-02-09","JP","AHOF"],
+    [51652,47542,4110,"2026-02-09","KR","AHOF"],
+    [83254,64008,19246,"2026-02-16","JP","AHOF"],
+    [43732,39651,4081,"2026-02-16","KR","AHOF"],
+    [78169,59385,18784,"2026-02-23","JP","AHOF"],
+    [43603,40019,3584,"2026-02-23","KR","AHOF"],
+    [75040,56660,18380,"2026-03-02","JP","AHOF"],
+    [49022,38557,10465,"2026-03-02","KR","AHOF"],
+    [66244,48716,17528,"2026-03-09","JP","AHOF"],
+    [46165,40835,5330,"2026-03-09","KR","AHOF"],
+    [63394,45742,17652,"2026-03-16","JP","AHOF"],
+    [41109,36914,4195,"2026-03-16","KR","AHOF"],
+    [62009,44776,17233,"2026-03-23","JP","AHOF"],
+    [36609,33911,2698,"2026-03-23","KR","AHOF"],
+    [8311,6051,2260,"2026-03-30","JP","AHOF"],
+    [4909,4575,334,"2026-03-30","KR","AHOF"],
+    [137214,97922,39292,"2025-12-29","JP","CLOSE YOUR EYES"],
+    [96389,80694,15695,"2025-12-29","KR","CLOSE YOUR EYES"],
+    [187872,133528,54344,"2026-01-05","JP","CLOSE YOUR EYES"],
+    [105843,87262,18581,"2026-01-05","KR","CLOSE YOUR EYES"],
+    [179485,130581,48904,"2026-01-12","JP","CLOSE YOUR EYES"],
+    [102629,86568,16061,"2026-01-12","KR","CLOSE YOUR EYES"],
+    [169803,125562,44241,"2026-01-19","JP","CLOSE YOUR EYES"],
+    [89088,75208,13880,"2026-01-19","KR","CLOSE YOUR EYES"],
+    [158007,115540,42467,"2026-01-26","JP","CLOSE YOUR EYES"],
+    [103863,85142,18721,"2026-01-26","KR","CLOSE YOUR EYES"],
+    [165841,123946,41895,"2026-02-02","JP","CLOSE YOUR EYES"],
+    [105364,90265,15099,"2026-02-02","KR","CLOSE YOUR EYES"],
+    [201706,155232,46474,"2026-02-09","JP","CLOSE YOUR EYES"],
+    [96094,82500,13594,"2026-02-09","KR","CLOSE YOUR EYES"],
+    [169639,128660,40979,"2026-02-16","JP","CLOSE YOUR EYES"],
+    [85029,71963,13066,"2026-02-16","KR","CLOSE YOUR EYES"],
+    [143873,105366,38507,"2026-02-23","JP","CLOSE YOUR EYES"],
+    [88754,74793,13961,"2026-02-23","KR","CLOSE YOUR EYES"],
+    [126589,91869,34720,"2026-03-02","JP","CLOSE YOUR EYES"],
+    [82318,70394,11924,"2026-03-02","KR","CLOSE YOUR EYES"],
+    [118395,85749,32646,"2026-03-09","JP","CLOSE YOUR EYES"],
+    [89481,76393,13088,"2026-03-09","KR","CLOSE YOUR EYES"],
+    [120728,87180,33548,"2026-03-16","JP","CLOSE YOUR EYES"],
+    [82510,70342,12168,"2026-03-16","KR","CLOSE YOUR EYES"],
+    [119997,87447,32550,"2026-03-23","JP","CLOSE YOUR EYES"],
+    [85871,74106,11765,"2026-03-23","KR","CLOSE YOUR EYES"],
+    [16279,11439,4840,"2026-03-30","JP","CLOSE YOUR EYES"],
+    [14200,12277,1923,"2026-03-30","KR","CLOSE YOUR EYES"],
+    [54099,41953,12146,"2025-12-29","JP","IDID"],
+    [60270,55621,4649,"2025-12-29","KR","IDID"],
+    [72304,60712,11592,"2026-01-05","JP","IDID"],
+    [57505,55321,2184,"2026-01-05","KR","IDID"],
+    [67943,54872,13071,"2026-01-12","JP","IDID"],
+    [59975,57960,2015,"2026-01-12","KR","IDID"],
+    [67874,54832,13042,"2026-01-19","JP","IDID"],
+    [51131,49924,1207,"2026-01-19","KR","IDID"],
+    [66780,54704,12076,"2026-01-26","JP","IDID"],
+    [51451,49840,1611,"2026-01-26","KR","IDID"],
+    [60545,49714,10831,"2026-02-02","JP","IDID"],
+    [54085,52138,1947,"2026-02-02","KR","IDID"],
+    [59340,49458,9882,"2026-02-09","JP","IDID"],
+    [57656,56575,1081,"2026-02-09","KR","IDID"],
+    [61343,50828,10515,"2026-02-16","JP","IDID"],
+    [58825,56306,2519,"2026-02-16","KR","IDID"],
+    [57251,47989,9262,"2026-02-23","JP","IDID"],
+    [57590,54865,2725,"2026-02-23","KR","IDID"],
+    [51500,44173,7327,"2026-03-02","JP","IDID"],
+    [52103,51710,393,"2026-03-02","KR","IDID"],
+    [49461,42048,7413,"2026-03-09","JP","IDID"],
+    [51988,49664,2324,"2026-03-09","KR","IDID"],
+    [47922,40351,7571,"2026-03-16","JP","IDID"],
+    [47991,47315,676,"2026-03-16","KR","IDID"],
+    [45968,39994,5974,"2026-03-23","JP","IDID"],
+    [44534,43936,598,"2026-03-23","KR","IDID"],
+    [6425,5648,777,"2026-03-30","JP","IDID"],
+    [6985,6678,307,"2026-03-30","KR","IDID"],
+    [158246,130103,28143,"2025-12-29","JP","KickFlip"],
+    [621088,573240,47848,"2025-12-29","KR","KickFlip"],
+    [194653,161960,32693,"2026-01-05","JP","KickFlip"],
+    [645880,587758,58122,"2026-01-05","KR","KickFlip"],
+    [200329,163699,36630,"2026-01-12","JP","KickFlip"],
+    [738771,671618,67153,"2026-01-12","KR","KickFlip"],
+    [200504,165101,35403,"2026-01-19","JP","KickFlip"],
+    [760406,690045,70361,"2026-01-19","KR","KickFlip"],
+    [198165,162984,35181,"2026-01-26","JP","KickFlip"],
+    [783073,710184,72889,"2026-01-26","KR","KickFlip"],
+    [185667,153043,32624,"2026-02-02","JP","KickFlip"],
+    [747004,679446,67558,"2026-02-02","KR","KickFlip"],
+    [214181,177851,36330,"2026-02-09","JP","KickFlip"],
+    [794445,715993,78452,"2026-02-09","KR","KickFlip"],
+    [210443,177423,33020,"2026-02-16","JP","KickFlip"],
+    [751860,679188,72672,"2026-02-16","KR","KickFlip"],
+    [195609,167993,27616,"2026-02-23","JP","KickFlip"],
+    [786511,713309,73202,"2026-02-23","KR","KickFlip"],
+    [176808,151626,25182,"2026-03-02","JP","KickFlip"],
+    [736761,676977,59784,"2026-03-02","KR","KickFlip"],
+    [197778,164127,33651,"2026-03-09","JP","KickFlip"],
+    [749481,690171,59310,"2026-03-09","KR","KickFlip"],
+    [192562,160719,31843,"2026-03-16","JP","KickFlip"],
+    [720328,664185,56143,"2026-03-16","KR","KickFlip"],
+    [182518,149979,32539,"2026-03-23","JP","KickFlip"],
+    [655093,600890,54203,"2026-03-23","KR","KickFlip"],
+    [26056,21541,4515,"2026-03-30","JP","KickFlip"],
+    [93924,86020,7904,"2026-03-30","KR","KickFlip"],
+    [23730,20598,3132,"2025-12-29","JP","idntt"],
+    [13742,13251,491,"2025-12-29","KR","idntt"],
+    [181081,147752,33329,"2026-01-05","JP","idntt"],
+    [457313,424496,32817,"2026-01-05","KR","idntt"],
+    [187327,152138,35189,"2026-01-12","JP","idntt"],
+    [199459,177575,21884,"2026-01-12","KR","idntt"],
+    [172751,136560,36191,"2026-01-19","JP","idntt"],
+    [164452,144076,20376,"2026-01-19","KR","idntt"],
+    [144803,120132,24671,"2026-01-26","JP","idntt"],
+    [132922,121832,11090,"2026-01-26","KR","idntt"],
+    [122075,102571,19504,"2026-02-02","JP","idntt"],
+    [114706,105161,9545,"2026-02-02","KR","idntt"],
+    [164848,137602,27246,"2026-02-09","JP","idntt"],
+    [128908,115717,13191,"2026-02-09","KR","idntt"],
+    [141642,118301,23341,"2026-02-16","JP","idntt"],
+    [104738,99683,5055,"2026-02-16","KR","idntt"],
+    [116389,96208,20181,"2026-02-23","JP","idntt"],
+    [102639,96614,6025,"2026-02-23","KR","idntt"],
+    [100177,83747,16430,"2026-03-02","JP","idntt"],
+    [86443,83432,3011,"2026-03-02","KR","idntt"],
+    [90272,76127,14145,"2026-03-09","JP","idntt"],
+    [76956,74123,2833,"2026-03-09","KR","idntt"],
+    [80105,65146,14959,"2026-03-16","JP","idntt"],
+    [70964,67911,3053,"2026-03-16","KR","idntt"],
+    [71580,58314,13266,"2026-03-23","JP","idntt"],
+    [67345,64858,2487,"2026-03-23","KR","idntt"],
+    [9876,8219,1657,"2026-03-30","JP","idntt"],
+    [10194,9960,234,"2026-03-30","KR","idntt"]
+];
+
+const SOCIAL_RAW_DATA = [
+    ["2025-12-29","AHOF",7693636,6444616,237800000,3689500],
+    ["2025-12-29","CLOSE YOUR EYES",3314295,3283538,114907692,4455267],
+    ["2025-12-29","IDID",1962387,3213136,82742858,862000],
+    ["2025-12-29","KickFlip",7583758,12483334,492000000,4135500],
+    ["2025-12-29","idntt",0,2426200,28700000,0],
+    ["2026-01-05","AHOF",7752069,6540834,244300000,3703000],
+    ["2026-01-05","CLOSE YOUR EYES",3357330,3325762,117542308,4637111],
+    ["2026-01-05","IDID",2019226,3265214,85507142,872167],
+    ["2026-01-05","KickFlip",7669527,12572223,498900000,4164250],
+    ["2026-01-05","idntt",0,2502850,29925000,0],
+    ["2026-01-12","AHOF",7780411,6642150,250900000,3714250],
+    ["2026-01-12","CLOSE YOUR EYES",3414353,3382100,120450000,4763289],
+    ["2026-01-12","IDID",2067039,3340550,89600000,880762],
+    ["2026-01-12","KickFlip",7729568,12600000,504750000,4185250],
+    ["2026-01-12","idntt",561045,2580550,31775002,0],
+    ["2026-01-19","AHOF",7766734,6705300,256850000,3724917],
+    ["2026-01-19","CLOSE YOUR EYES",3451871,3444667,123483334,4767000],
+    ["2026-01-19","IDID",2117859,3408600,92800000,887904],
+    ["2026-01-19","KickFlip",7780218,12600000,511500000,4210500],
+    ["2026-01-19","idntt",3718721,2711500,34960001,4076500],
+    ["2026-01-26","AHOF",7793619,6749500,261000000,3733333],
+    ["2026-01-26","CLOSE YOUR EYES",3473929,3463408,124941666,4767000],
+    ["2026-01-26","IDID",2163220,3456500,95650000,893667],
+    ["2026-01-26","KickFlip",7842900,12600000,518675000,4232500],
+    ["2026-01-26","idntt",4016661,2816450,37940000,5723000],
+    ["2026-02-02","AHOF",7803215,6808200,266250000,3742111],
+    ["2026-02-02","CLOSE YOUR EYES",3488936,3482958,126258334,4767000],
+    ["2026-02-02","IDID",2200403,3500850,99200000,899500],
+    ["2026-02-02","KickFlip",7897346,12600000,524515000,4255000],
+    ["2026-02-02","idntt",4330207,2922252,40888237,5739000],
+    ["2026-02-09","AHOF",7837416,6860600,270550000,3748889],
+    ["2026-02-09","CLOSE YOUR EYES",3508453,3503467,127783332,4767000],
+    ["2026-02-09","IDID",2237696,3547900,102300000,905625],
+    ["2026-02-09","KickFlip",7926991,12882759,529131434,4270000],
+    ["2026-02-09","idntt",4270452,3029477,43194119,5753500],
+    ["2026-02-16","AHOF",7875037,6936386,276342856,3758200],
+    ["2026-02-16","CLOSE YOUR EYES",3539269,3543750,129733334,4767000],
+    ["2026-02-16","IDID",2277723,3610800,105750000,910708],
+    ["2026-02-16","KickFlip",7959413,12877586,536178566,4291000],
+    ["2026-02-16","idntt",4225631,3123571,45217648,5758500],
+    ["2026-02-23","AHOF",7892314,6998214,282357144,3770800],
+    ["2026-02-23","CLOSE YOUR EYES",3551503,3570850,131450000,4767000],
+    ["2026-02-23","IDID",2327890,3712517,109450000,921250],
+    ["2026-02-23","KickFlip",7996796,13167242,542975000,4311000],
+    ["2026-02-23","idntt",4180498,3274366,48766668,5763800],
+    ["2026-03-02","AHOF",7921917,7131250,286600000,3783000],
+    ["2026-03-02","CLOSE YOUR EYES",3561403,3599050,133000000,4767000],
+    ["2026-03-02","IDID",2364200,3766408,112180000,931679],
+    ["2026-03-02","KickFlip",8021865,13251725,548475000,4328500],
+    ["2026-03-02","idntt",4139489,3345634,51300002,5766909],
+    ["2026-03-09","AHOF",7916887,7350000,291250000,3791200],
+    ["2026-03-09","CLOSE YOUR EYES",3572769,3626250,134820000,4767000],
+    ["2026-03-09","IDID",2396208,3824825,115370000,938681],
+    ["2026-03-09","KickFlip",8079571,13405000,557100000,4363500],
+    ["2026-03-09","idntt",4198715,3403128,53633336,5764818],
+    ["2026-03-16","AHOF",7939805,7503125,296100000,3800800],
+    ["2026-03-16","CLOSE YOUR EYES",3580295,3643250,135765716,4767000],
+    ["2026-03-16","IDID",2427057,3906750,118250000,944490],
+    ["2026-03-16","KickFlip",8169744,13650000,568000000,4398500],
+    ["2026-03-16","idntt",4182673,3463872,55400001,5764023],
+    ["2026-03-23","AHOF",7983843,7653125,301200000,3811600],
+    ["2026-03-23","CLOSE YOUR EYES",3598262,3681050,137014284,4767000],
+    ["2026-03-23","IDID",2493537,4369300,124350000,953067],
+    ["2026-03-23","KickFlip",8252503,13895000,576600000,4423000],
+    ["2026-03-23","idntt",4139783,3569950,57875001,5765750],
+    ["2026-03-30","AHOF",1145282,1100000,43600000,545600],
+    ["2026-03-30","CLOSE YOUR EYES",516926,535700,19850000,681000],
+    ["2026-03-30","IDID",360417,645700,18200000,136833],
+    ["2026-03-30","KickFlip",1185037,2000000,83100000,634000],
+    ["2026-03-30","idntt",588764,516000,8450000,824000]
+];
+
+function weekDays(week) {
+    return week === '2026-03-30' ? 1 : 7;
+}
+
+const WEEKS = ['2025-12-29', '2026-01-05', '2026-01-12', '2026-01-19', '2026-01-26', '2026-02-02', '2026-02-09', '2026-02-16', '2026-02-23', '2026-03-02', '2026-03-09', '2026-03-16', '2026-03-23', '2026-03-30'];
+
+let socialData = SOCIAL_RAW_DATA.map(r => ({
+    week: r[0],
+    artist: r[1],
+    ig: Math.round(r[2] / weekDays(r[0])),
+    tt_followers: Math.round(r[3] / weekDays(r[0])),
+    tt_likes: Math.round(r[4] / weekDays(r[0])),
+    yt: Math.round(r[5] / weekDays(r[0]))
+}));
+
+class Dashboard {
+    constructor() {
+        this.charts = {};
+        this.init();
+    }
+
+    mk() {
+        return document.getElementById('filter-metric').value;
+    }
+
+    mf() {
+        return document.getElementById('filter-market').value;
+    }
+
+    vis() {
+        const chips = document.querySelectorAll('.artist-chip.active');
+        return Array.from(chips).map(c => c.dataset.artist);
+    }
+
+    agg(loc, metric) {
+        const data = {};
+        const visible = this.vis();
+        WEEKS.forEach(w => {
+            data[w] = {};
+            visible.forEach(a => {
+                data[w][a] = 0;
+            });
+        });
+        STREAMING_DATA.forEach(r => {
+            const [total, premium, ad, week, location, artist] = r;
+            if (visible.includes(artist) && (location === loc || loc === 'all')) {
+                const value = metric === 'premium' ? premium : (metric === 'ad' ? ad : total);
+                data[week][artist] += value;
+            }
+        });
+        return data;
+    }
+
+    validWeeks() {
+        return WEEKS;
+    }
+
+    fmt(n) {
+        if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+        if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
+        return n.toString();
+    }
+
+    renderChips() {
+        const container = document.getElementById('artist-chips');
+        const controls = document.createElement('div');
+        controls.className = 'chip-controls';
+
+        const allBtn = document.createElement('button');
+        allBtn.textContent = 'All';
+        allBtn.onclick = () => {
+            document.querySelectorAll('.artist-chip').forEach(c => c.classList.add('active'));
+            this.applyFilters();
+        };
+
+        const noneBtn = document.createElement('button');
+        noneBtn.textContent = 'None';
+        noneBtn.onclick = () => {
+            document.querySelectorAll('.artist-chip').forEach(c => c.classList.remove('active'));
+            this.applyFilters();
+        };
+
+        controls.appendChild(allBtn);
+        controls.appendChild(noneBtn);
+        container.appendChild(controls);
+
+        ALL_ARTISTS.forEach(a => {
+            const chip = document.createElement('div');
+            chip.className = 'artist-chip active';
+            chip.dataset.artist = a;
+            chip.innerHTML = `<span class="chip-dot" style="background-color:${COLORS[a]}"></span>${a}`;
+            chip.onclick = () => {
+                chip.classList.toggle('active');
+                this.applyFilters();
+            };
+            container.appendChild(chip);
+        });
+    }
+
+    init() {
+        this.renderChips();
+        this.applyFilters();
+    }
+
+    ds(artist, data) {
+        const color = COLORS[artist];
+        return {
+            label: artist,
+            data: data,
+            borderColor: color,
+            backgroundColor: color + '20',
+            borderWidth: 2,
+            pointRadius: 4,
+            pointStyle: 'circle',
+            pointBackgroundColor: color,
+            pointBorderColor: 'white',
+            pointBorderWidth: 2,
+            tension: 0.4
+        };
+    }
+
+    lineOpts(yFmt) {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: true, position: 'top' },
+                filler: { propagate: true }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: yFmt ? { callback: yFmt } : {}
+                }
+            }
+        };
+    }
+
+    renderKPIs() {
+        const container = document.getElementById('kpi-row');
+        container.innerHTML = '';
+        const metric = this.mk();
+        const vw = WEEKS;
+        const lastWeek = vw[vw.length - 1];
+        const prevWeek = vw[vw.length - 2];
+
+        const krData = this.agg('KR', metric);
+        const jpData = this.agg('JP', metric);
+
+        const rankings = ALL_ARTISTS.map(a => {
+            let tot = 0, lw = 0, pw = 0;
+            vw.forEach(w => {
+                const val = (krData[w][a] || 0) + (jpData[w][a] || 0);
+                tot += val;
+                if (w === lastWeek) lw = val;
+                if (w === prevWeek) pw = val;
+            });
+            return { artist: a, total: tot, lw, pw };
+        }).sort((a, b) => b.total - a.total);
+
+        const top = rankings[0];
+        const totalAll = rankings.reduce((s, r) => s + r.total, 0);
+        const topShare = totalAll > 0 ? (top.total / totalAll * 100).toFixed(1) : '0';
+        const topWow = top.pw > 0 ? ((top.lw - top.pw) / top.pw * 100) : 0;
+        const totalLastWeek = rankings.reduce((s, r) => s + r.lw, 0);
+
+        const kpis = [
+            { label: '#1 Artist — 2026 YTD', value: this.fmt(top.total), change: top.artist, highlight: true },
+            { label: 'Competitive Set Total', value: this.fmt(totalAll), change: ALL_ARTISTS.length + ' artists tracked', highlight: false },
+            { label: '#1 Market Share', value: topShare + '%', change: top.artist + ' share of set', highlight: false },
+            { label: 'Set Total — Latest Week', value: this.fmt(totalLastWeek), change: lastWeek, highlight: false }
+        ];
+
+        kpis.forEach(k => {
+            const card = document.createElement('div');
+            card.className = 'kpi-card' + (k.highlight ? ' highlight' : '');
+            card.innerHTML = `
+                <div class="kpi-label">${k.label}</div>
+                <div class="kpi-value">${k.value}</div>
+                <div class="kpi-change">${k.change}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    renderTrends() {
+        const metric = this.mk();
+        const market = this.mf();
+        const visible = this.vis();
+        const krData = this.agg('KR', metric);
+        const jpData = this.agg('JP', metric);
+
+        // Korea
+        document.getElementById('trend-kr-title').textContent = 'Weekly Streaming Trend — South Korea';
+        if (this.charts.kr) this.charts.kr.destroy();
+        const krCtx = document.getElementById('chart-kr').getContext('2d');
+        const krDs = visible.map(a => this.ds(a, WEEKS.map(w => krData[w][a] || 0)));
+        this.charts.kr = new Chart(krCtx, {
+            type: 'line',
+            data: { labels: WEEKS, datasets: krDs },
+            options: this.lineOpts(v => this.fmt(v))
+        });
+
+        // Japan
+        document.getElementById('trend-jp-title').textContent = 'Weekly Streaming Trend — Japan';
+        if (this.charts.jp) this.charts.jp.destroy();
+        const jpCtx = document.getElementById('chart-jp').getContext('2d');
+        const jpDs = visible.map(a => this.ds(a, WEEKS.map(w => jpData[w][a] || 0)));
+        this.charts.jp = new Chart(jpCtx, {
+            type: 'line',
+            data: { labels: WEEKS, datasets: jpDs },
+            options: this.lineOpts(v => this.fmt(v))
+        });
+    }
+
+    renderCumulative() {
+        const metric = this.mk();
+        const krData = this.agg('KR', metric);
+        const jpData = this.agg('JP', metric);
+        const visible = this.vis();
+
+        if (this.charts.cumul) this.charts.cumul.destroy();
+        const ctx = document.getElementById('chart-cumulative').getContext('2d');
+
+        const datasets = visible.map(a => {
+            let cum = 0;
+            const data = WEEKS.map(w => {
+                cum += (krData[w][a] || 0) + (jpData[w][a] || 0);
+                return cum;
+            });
+            return this.ds(a, data);
+        });
+
+        this.charts.cumul = new Chart(ctx, {
+            type: 'line',
+            data: { labels: WEEKS, datasets: datasets },
+            options: this.lineOpts(v => this.fmt(v))
+        });
+    }
+
+    renderRatio() {
+        const metric = this.mk();
+        const krData = this.agg('KR', metric);
+        const jpData = this.agg('JP', metric);
+        const visible = this.vis();
+
+        if (this.charts.ratio) this.charts.ratio.destroy();
+        const ctx = document.getElementById('chart-ratio').getContext('2d');
+
+        const datasets = visible.map(a => {
+            const data = WEEKS.map(w => {
+                const kr = krData[w][a] || 0;
+                const jp = jpData[w][a] || 0;
+                return kr > 0 ? (jp / (kr + jp)) * 100 : 0;
+            });
+            return this.ds(a, data);
+        });
+
+        this.charts.ratio = new Chart(ctx, {
+            type: 'line',
+            data: { labels: WEEKS, datasets: datasets },
+            options: this.lineOpts(v => v.toFixed(1) + '%')
+        });
+    }
+
+    renderGrowth() {
+        const metric = this.mk();
+        const krData = this.agg('KR', metric);
+        const jpData = this.agg('JP', metric);
+        const visible = this.vis();
+
+        if (this.charts.growth) this.charts.growth.destroy();
+        const ctx = document.getElementById('chart-growth').getContext('2d');
+
+        const datasets = visible.map(a => {
+            const data = [];
+            for (let i = 1; i < WEEKS.length; i++) {
+                const prev = (krData[WEEKS[i-1]][a] || 0) + (jpData[WEEKS[i-1]][a] || 0);
+                const curr = (krData[WEEKS[i]][a] || 0) + (jpData[WEEKS[i]][a] || 0);
+                const growth = prev > 0 ? ((curr - prev) / prev) * 100 : 0;
+                data.push(growth);
+            }
+            return this.ds(a, data);
+        });
+
+        this.charts.growth = new Chart(ctx, {
+            type: 'line',
+            data: { labels: WEEKS.slice(1), datasets: datasets },
+            options: this.lineOpts(v => v.toFixed(1) + '%')
+        });
+    }
+
+    renderIG() {
+        const visible = this.vis();
+        if (this.charts.ig) this.charts.ig.destroy();
+        const ctx = document.getElementById('chart-ig').getContext('2d');
+
+        const datasets = visible.map(a => {
+            const data = WEEKS.map(w => {
+                const rec = socialData.find(s => s.week === w && s.artist === a);
+                return rec ? rec.ig : 0;
+            });
+            return this.ds(a, data);
+        });
+
+        this.charts.ig = new Chart(ctx, {
+            type: 'line',
+            data: { labels: WEEKS, datasets: datasets },
+            options: this.lineOpts(v => this.fmt(v))
+        });
+    }
+
+    renderTTFollowers() {
+        const visible = this.vis();
+        if (this.charts.ttf) this.charts.ttf.destroy();
+        const ctx = document.getElementById('chart-tiktok-followers').getContext('2d');
+
+        const datasets = visible.map(a => {
+            const data = WEEKS.map(w => {
+                const rec = socialData.find(s => s.week === w && s.artist === a);
+                return rec ? rec.tt_followers : 0;
+            });
+            return this.ds(a, data);
+        });
+
+        this.charts.ttf = new Chart(ctx, {
+            type: 'line',
+            data: { labels: WEEKS, datasets: datasets },
+            options: this.lineOpts(v => this.fmt(v))
+        });
+    }
+
+    renderTTLikes() {
+        const visible = this.vis();
+        if (this.charts.ttl) this.charts.ttl.destroy();
+        const ctx = document.getElementById('chart-tiktok-likes').getContext('2d');
+
+        const datasets = visible.map(a => {
+            const data = WEEKS.map(w => {
+                const rec = socialData.find(s => s.week === w && s.artist === a);
+                return rec ? rec.tt_likes : 0;
+            });
+            return this.ds(a, data);
+        });
+
+        this.charts.ttl = new Chart(ctx, {
+            type: 'line',
+            data: { labels: WEEKS, datasets: datasets },
+            options: this.lineOpts(v => this.fmt(v))
+        });
+    }
+
+    renderMatrix() {
+        const visible = this.vis();
+        const platform = document.getElementById('filter-social-platform').value;
+        const lastWeek = WEEKS[WEEKS.length - 1];
+        const metric = this.mk();
+        const krData = this.agg('KR', metric);
+        const jpData = this.agg('JP', metric);
+
+        if (this.charts.matrix) this.charts.matrix.destroy();
+        const ctx = document.getElementById('chart-matrix').getContext('2d');
+
+        let socialField = 'ig';
+        if (platform === 'tt') socialField = 'tt_followers';
+        else if (platform === 'yt') socialField = 'yt';
+
+        const datasets = visible.map(a => {
+            const socialRec = socialData.find(s => s.week === lastWeek && s.artist === a);
+            const sx = socialRec ? socialRec[socialField] : 0;
+
+            let sy = 0;
+            WEEKS.forEach(w => {
+                sy += (krData[w][a] || 0) + (jpData[w][a] || 0);
+            });
+
+            return {
+                label: a,
+                data: [{ x: sx, y: sy }],
+                backgroundColor: COLORS[a],
+                pointRadius: 8,
+                pointBorderColor: 'white',
+                pointBorderWidth: 2
+            };
+        });
+
+        this.charts.matrix = new Chart(ctx, {
+            type: 'scatter',
+            data: { datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true } },
+                scales: {
+                    x: { title: { display: true, text: 'Social Followers (Latest Week)' } },
+                    y: { title: { display: true, text: '2026 YTD Total Streams (KR+JP)' } }
+                }
+            }
+        });
+    }
+
+    renderTable() {
+        const lastWeek = WEEKS[WEEKS.length - 1];
+        const prevWeek = WEEKS[WEEKS.length - 2];
+        const metric = this.mk();
+        const mkt = this.mf();
+        const stats = {};
+        ALL_ARTISTS.forEach(art => {
+            let t=0, kr=0, jp=0, lw=0, pw=0;
+            STREAMING_DATA.forEach(d => {
+                const [total, premium, ad, week, loc, artist] = d;
+                if (artist !== art) return;
+                if (mkt !== 'all' && loc !== mkt) return;
+                const val = metric === 'premium' ? premium : (metric === 'ad' ? ad : total);
+                t += val;
+                if (loc === 'KR') kr += val;
+                if (loc === 'JP') jp += val;
+                if (week === lastWeek) lw += val;
+                if (week === prevWeek) pw += val;
+            });
+            stats[art] = { t, kr, jp, lw, wow: pw > 0 ? ((lw - pw) / pw * 100) : 0, jpR: (kr + jp) > 0 ? (jp / (kr + jp) * 100) : 0 };
+        });
+        const sorted = Object.entries(stats).sort((a, b) => b[1].t - a[1].t);
+        let h = '<table class="data-table"><thead><tr><th>Rank</th><th>Artist</th><th>Total Streams</th><th>KR</th><th>JP</th><th>JP Ratio</th><th>Latest Week</th><th>WoW %</th></tr></thead><tbody>';
+        sorted.forEach(([art, s], i) => {
+            h += `<tr>`;
+            h += `<td><span class="rank-badge${i < 3 ? ' top3' : ''}">${i + 1}</span></td>`;
+            h += `<td><span class="artist-badge"><span class="artist-dot" style="background:${COLORS[art]}"></span>${art}</span></td>`;
+            h += `<td>${this.fmt(s.t)}</td><td>${this.fmt(s.kr)}</td><td>${this.fmt(s.jp)}</td><td>${s.jpR.toFixed(1)}%</td><td>${this.fmt(s.lw)}</td>`;
+            h += `<td style="color:${s.wow >= 0 ? 'var(--positive)' : 'var(--negative)'}">${s.wow >= 0 ? '+' : ''}${s.wow.toFixed(1)}%</td></tr>`;
+        });
+        h += '</tbody></table>';
+        document.getElementById('summary-table').innerHTML = h;
+    }
+
+    applyFilters() {
+        this.renderKPIs();
+        this.renderTrends();
+        this.renderCumulative();
+        this.renderRatio();
+        this.renderGrowth();
+        this.renderIG();
+        this.renderTTFollowers();
+        this.renderTTLikes();
+        this.renderMatrix();
+        this.renderTable();
+    }
+}
+
+const dashboard = new Dashboard();
+</script>
+</body>
+</html>
