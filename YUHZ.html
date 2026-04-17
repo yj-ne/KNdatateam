@@ -475,7 +475,7 @@ body {
     </section>
 
     <footer class="footer">
-        Data Source: Luminate / Snowflake MCP | Generated: 2026-04-16 | Prepared for Pinnacle Entertainment
+        Data Source: Luminate / Snowflake MCP | Data through: 2026-03-29 (complete weeks only) | Generated: 2026-04-16 | Prepared for Pinnacle Entertainment
     </footer>
 </div>
 
@@ -485,9 +485,10 @@ const COLORS = {
     'IDID':'#4e79a7',
     'CLOSE YOUR EYES':'#f28e2b',
     'AHOF':'#76b7b2',
-    'idntt':'#59a14f'
+    'idntt':'#59a14f',
+    'ZEROBASEONE':'#b07aa1'
 };
-const ALL_ARTISTS = ['KickFlip','IDID','CLOSE YOUR EYES','AHOF','idntt'];
+const ALL_ARTISTS = ['KickFlip','IDID','CLOSE YOUR EYES','AHOF','idntt','ZEROBASEONE'];
 
 const STREAMING_DATA = [
     [87446,64792,22654,"2025-12-29","JP","AHOF"],
@@ -629,7 +630,35 @@ const STREAMING_DATA = [
     [71580,58314,13266,"2026-03-23","JP","idntt"],
     [67345,64858,2487,"2026-03-23","KR","idntt"],
     [9876,8219,1657,"2026-03-30","JP","idntt"],
-    [10194,9960,234,"2026-03-30","KR","idntt"]
+    [10194,9960,234,"2026-03-30","KR","idntt"],
+    [2209735,1838463,371272,"2025-12-29","JP","ZEROBASEONE"],
+    [623378,511997,111381,"2025-12-29","KR","ZEROBASEONE"],
+    [2980168,2550460,429708,"2026-01-05","JP","ZEROBASEONE"],
+    [1267700,1146198,121502,"2026-01-05","KR","ZEROBASEONE"],
+    [3432063,2986425,445638,"2026-01-12","JP","ZEROBASEONE"],
+    [1612223,1461788,150435,"2026-01-12","KR","ZEROBASEONE"],
+    [3266177,2813917,452260,"2026-01-19","JP","ZEROBASEONE"],
+    [1710104,1559108,150996,"2026-01-19","KR","ZEROBASEONE"],
+    [3332848,2881495,451353,"2026-01-26","JP","ZEROBASEONE"],
+    [1594931,1445108,149823,"2026-01-26","KR","ZEROBASEONE"],
+    [4457954,3923170,534784,"2026-02-02","JP","ZEROBASEONE"],
+    [3630922,3463703,167219,"2026-02-02","KR","ZEROBASEONE"],
+    [3538593,3032602,505991,"2026-02-09","JP","ZEROBASEONE"],
+    [2169405,2032481,136924,"2026-02-09","KR","ZEROBASEONE"],
+    [4147766,3431871,715895,"2026-02-16","JP","ZEROBASEONE"],
+    [1326703,1200137,126566,"2026-02-16","KR","ZEROBASEONE"],
+    [3107140,2588858,518282,"2026-02-23","JP","ZEROBASEONE"],
+    [1115698,989822,125876,"2026-02-23","KR","ZEROBASEONE"],
+    [2590370,2163671,426699,"2026-03-02","JP","ZEROBASEONE"],
+    [895953,797439,98514,"2026-03-02","KR","ZEROBASEONE"],
+    [2708289,2204933,503356,"2026-03-09","JP","ZEROBASEONE"],
+    [978575,853336,125239,"2026-03-09","KR","ZEROBASEONE"],
+    [3022080,2446100,575980,"2026-03-16","JP","ZEROBASEONE"],
+    [959822,820355,139467,"2026-03-16","KR","ZEROBASEONE"],
+    [2404917,1974471,430446,"2026-03-23","JP","ZEROBASEONE"],
+    [693952,589210,104742,"2026-03-23","KR","ZEROBASEONE"],
+    [326017,269290,56727,"2026-03-30","JP","ZEROBASEONE"],
+    [94904,80967,13937,"2026-03-30","KR","ZEROBASEONE"]
 ];
 
 const SOCIAL_RAW_DATA = [
@@ -702,23 +731,37 @@ const SOCIAL_RAW_DATA = [
     ["2026-03-30","CLOSE YOUR EYES",516926,535700,19850000,681000],
     ["2026-03-30","IDID",360417,645700,18200000,136833],
     ["2026-03-30","KickFlip",1185037,2000000,83100000,634000],
-    ["2026-03-30","idntt",588764,516000,8450000,824000]
+    ["2026-03-30","idntt",588764,516000,8450000,824000],
+    ["2025-12-29","ZEROBASEONE",32504260,36400000,2637783340,14462779],
+    ["2026-01-05","ZEROBASEONE",32619420,36804002,2647716660,14490667],
+    ["2026-01-12","ZEROBASEONE",32756201,36932002,2662450000,14522667],
+    ["2026-01-19","ZEROBASEONE",32805026,36997336,2679350000,14553333],
+    ["2026-01-26","ZEROBASEONE",32802494,37062669,2686850000,14575909],
+    ["2026-02-02","ZEROBASEONE",32786163,37100000,2697983340,14601365],
+    ["2026-02-09","ZEROBASEONE",32923017,37100000,2712316660,14623182],
+    ["2026-02-16","ZEROBASEONE",33048650,37100000,2729100000,14636897],
+    ["2026-02-23","ZEROBASEONE",33019887,37100000,2738200000,14658966],
+    ["2026-03-02","ZEROBASEONE",32985273,37100000,2743600000,14675863],
+    ["2026-03-09","ZEROBASEONE",33040117,37100000,2749350000,14692759],
+    ["2026-03-16","ZEROBASEONE",33100914,37100000,2760000000,14700000],
+    ["2026-03-23","ZEROBASEONE",33062564,37100000,2766650000,14700000],
+    ["2026-03-30","ZEROBASEONE",4718275,5300000,395700000,2100000]
 ];
 
-function weekDays(week) {
-    return week === '2026-03-30' ? 1 : 7;
-}
+/* Exclude incomplete final week (2026-03-30 = 1 day only) to avoid misleading drop */
+const INCOMPLETE_WEEK = '2026-03-30';
+const WEEKS = ['2025-12-29', '2026-01-05', '2026-01-12', '2026-01-19', '2026-01-26', '2026-02-02', '2026-02-09', '2026-02-16', '2026-02-23', '2026-03-02', '2026-03-09', '2026-03-16', '2026-03-23'];
 
-const WEEKS = ['2025-12-29', '2026-01-05', '2026-01-12', '2026-01-19', '2026-01-26', '2026-02-02', '2026-02-09', '2026-02-16', '2026-02-23', '2026-03-02', '2026-03-09', '2026-03-16', '2026-03-23', '2026-03-30'];
-
-let socialData = SOCIAL_RAW_DATA.map(r => ({
-    week: r[0],
-    artist: r[1],
-    ig: Math.round(r[2] / weekDays(r[0])),
-    tt_followers: Math.round(r[3] / weekDays(r[0])),
-    tt_likes: Math.round(r[4] / weekDays(r[0])),
-    yt: Math.round(r[5] / weekDays(r[0]))
-}));
+let socialData = SOCIAL_RAW_DATA
+    .filter(r => r[0] !== INCOMPLETE_WEEK)
+    .map(r => ({
+        week: r[0],
+        artist: r[1],
+        ig: Math.round(r[2] / 7),
+        tt_followers: Math.round(r[3] / 7),
+        tt_likes: Math.round(r[4] / 7),
+        yt: Math.round(r[5] / 7)
+    }));
 
 class Dashboard {
     constructor() {
@@ -750,6 +793,7 @@ class Dashboard {
         });
         STREAMING_DATA.forEach(r => {
             const [total, premium, ad, week, location, artist] = r;
+            if (!data[week]) return;
             if (visible.includes(artist) && (location === loc || loc === 'all')) {
                 const value = metric === 'premium' ? premium : (metric === 'ad' ? ad : total);
                 data[week][artist] += value;
@@ -1117,6 +1161,7 @@ class Dashboard {
             STREAMING_DATA.forEach(d => {
                 const [total, premium, ad, week, loc, artist] = d;
                 if (artist !== art) return;
+                if (week === INCOMPLETE_WEEK) return;
                 if (mkt !== 'all' && loc !== mkt) return;
                 const val = metric === 'premium' ? premium : (metric === 'ad' ? ad : total);
                 t += val;
